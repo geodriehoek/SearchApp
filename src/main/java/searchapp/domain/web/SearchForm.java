@@ -18,6 +18,13 @@ public class SearchForm {
         this.input = input;
     }
 
+    public SearchForm(SearchForm other){
+        this.input = other.input;
+        this.rating = other.rating;
+        this.minQuantitySold = other.minQuantitySold;
+        this.sortOption = other.sortOption;
+    }
+
     public String getInput() {
         return input;
     }
@@ -61,7 +68,7 @@ public class SearchForm {
     @Override
     public String toString() {
         return "SearchForm{" +
-//                "id='" + id + '\'' +
+                "id='" + id + '\'' +
                 ", input='" + input + '\'' +
                 ", rating=" + rating +
                 ", minQuantitySold=" + minQuantitySold +

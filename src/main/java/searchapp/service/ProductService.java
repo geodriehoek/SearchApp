@@ -1,5 +1,7 @@
 package searchapp.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import searchapp.domain.Product;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Service
 public class ProductService {
+    Logger log = LoggerFactory.getLogger(ProductService.class);
     @Autowired
     private ProductQueryBuilder productQueryBuilder;
     @Autowired
@@ -37,6 +40,7 @@ public class ProductService {
     }
 
     public List<Product> search(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption){
+        log.info("searching: " + stringToSearch);
         return helper.searchResponseToList(
                     repo.search(
                             productQueryBuilder.buildMultiFieldQuery(stringToSearch, ratingFilter, minQuantitySold, sortOption)
@@ -59,7 +63,6 @@ public class ProductService {
                     )
                 );
     }
-
 
     public void delete(String id){
         repo.delete(id);

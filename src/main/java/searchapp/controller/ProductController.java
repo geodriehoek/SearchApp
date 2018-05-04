@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 import org.thymeleaf.spring5.expression.Mvc;
 import searchapp.domain.Product;
 import searchapp.domain.web.CustomerRatingOptions;
@@ -18,12 +17,18 @@ import java.util.Map;
 
 @Controller
 public class ProductController {
-    private final static String ROOT = "/products/";                                        //
+    private final static String ROOT = "/products/";
     private Logger log = LoggerFactory.getLogger(ProductController.class);
     @Autowired
     private ProductService service;
     @Autowired
     private Mvc mvc;
+    private SearchForm searchForm = new SearchForm();
+
+    @ModelAttribute("searchForm")
+    public SearchForm initializeSearchForm(){
+        return new SearchForm(searchForm);
+    }
 
     @GetMapping(path = ROOT + "search")
     public String getSearchForm(Map<String, Object> model){
@@ -35,6 +40,23 @@ public class ProductController {
 
     @PostMapping(path = ROOT + "search")
     public String processSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
+        log.debug(searchForm.toString());
+        List<Product> resultList = service.search(
+                                            searchForm.getInput(),
+                                            searchForm.getRating(),
+                                            searchForm.getMinQuantitySold(),
+                                            searchForm.getSortOption()
+                                    );
+        model.put("resultList", resultList);
+        model.put("searchForm", searchForm);
+        this.searchForm = searchForm;
+        model.put("numberOfResults", resultList.size());
+        return "search-result";
+    }
+
+    @GetMapping(path = ROOT + "searchResult")
+    public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
+        log.debug(searchForm.toString());
         List<Product> resultList = service.search(
                                             searchForm.getInput(),
                                             searchForm.getRating(),
@@ -60,13 +82,25 @@ public class ProductController {
     public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct,
                                 @PathVariable("upc12") String upc12){
         service.updateByUpc12(upc12, updateProduct);
-        return "redirect:" + mvc.url("PC#getSearchForm").build();
+        Thread thread = new Thread();
+        try {                                                                                                           // TODO: asynchronisatie
+            thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
     @GetMapping(path = ROOT + "/delete")
     public String delete(@RequestParam String id){                                           //TODO: searchForm meekrijgen na post zodat lijst opnieuw kan getoond worden na delete
         service.delete(id);
-        return "redirect:" + mvc.url("PC#getSearchForm").build();
+        Thread thread = new Thread();
+        try {                                                                                                           // TODO: asynchronisatie
+            thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
     @GetMapping(path = ROOT + "/new")
