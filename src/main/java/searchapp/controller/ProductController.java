@@ -34,7 +34,7 @@ public class ProductController {
     }
 
     @PostMapping(path = ROOT + "search")
-    public String processSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){                         // TODO: uniformiteit in return
+    public String processSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         List<Product> resultList = service.search(
                                             searchForm.getInput(),
                                             searchForm.getRating(),
@@ -45,18 +45,11 @@ public class ProductController {
         model.put("searchForm", searchForm);
         model.put("numberOfResults", resultList.size());
         return "search-result";
-
-//        ModelAndView mav = new ModelAndView("search-result");
-//        mav.addObject("resultList", resultList);
-//        mav.addObject("searchForm", searchForm);
-//        mav.addObject("numberOfResults", resultList.size());
-//        return mav;
     }
 
     @GetMapping(path = ROOT + "details/{upc12}")
     public String details(@PathVariable("upc12") String upc12,
                           Map<String, Object> model){
-//        model.put("updateProductForm", new Product(service.getOneById(service.getIdByUpc12(upc12))));
         model.put("updateProductForm", new Product(service.searchByUpc12(upc12)));
         model.put("ratingOptions", CustomerRatingOptions.values());
 
@@ -67,7 +60,6 @@ public class ProductController {
     public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct,
                                 @PathVariable("upc12") String upc12){
         service.updateByUpc12(upc12, updateProduct);
-//        service.updateById(updateProduct.getGrp_id(), updateProduct);                                            //in dit geval wel correct, ma misschien ni consistent?
         return "redirect:" + mvc.url("PC#getSearchForm").build();
     }
 
@@ -91,6 +83,5 @@ public class ProductController {
         String url = "redirect:" + mvc.url("PC#details").build() + newProduct.getUpc12();
         log.debug(url);
         return url;
-//        return "redirect:" + mvc.url("PC#details").arg(0, newProduct.getUpc12()).build();
     }
 }
