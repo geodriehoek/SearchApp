@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>new-product</title>
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css"/>
+</head>
+<body>
+<div class="container">
+    <div class="jumbotron">
+        <h1>Search Results</h1>
+        <h3><a th:href="${#mvc.url('PC#getSearchForm').build()}">Back to search</a></h3>
+    </div>
+    <form method="post" th:object="${newProductForm}">
+
+        <div class="form-group">
+            <label for="gid">GroupId</label>
+            <input class="form-control" type="text" id="gid" th:field="*{grp_id}"/>
+        </div>
+        <div class="form-group">
+            <label for="bn">BrandName</label>
+            <input class="form-control" type="text" id="bn" th:field="*{brandName}"/>
+        </div>
+        <div class="form-group">
+            <label for="pn">ProductName</label>
+            <input class="form-control" type="text" id="pn" th:field="*{productName}"/>
+        </div>
+        <div class="form-group">
+            <label for="p">price</label>
+            <input class="form-control" type="text" id="p" th:field="*{price}"/>
+        </div>
+        <div class="form-group">
+            <label for="cr">CustomerRating</label>
+            <select  id="cr" th:field="*{customerRating}">
+                <option th:each="option : ${ratingOptions}" th:value="${option.value}" th:text="${option.value}"/>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="upc">upc-12</label>
+            <input class="form-control" type="text" id="upc" th:field="*{upc12}"/>
+        </div>
+        <div class="form-group">
+            <label for="qs">QuantitySold</label>
+            <input class="form-control" type="text" id="qs" th:field="*{quantitySold}"/>
+        </div>
+        <input type="submit" value="SAVE" class="btn btn-primary">
+    </form>
+
+</div>
+</body>
+</html>

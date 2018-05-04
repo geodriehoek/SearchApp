@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>searchProduct</title>
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css"/>
+</head>
+<body>
+    <div class="container">
+
+        <div class="jumbotron">
+            <h1>Search Products</h1>
+        </div>
+
+        <form method="post" th:object="${searchForm}">
+            <div class="form-group">
+                <label for="searchInput">Enter Search:</label>
+                <input class="form-control" type="text" id="searchInput" th:field="*{input}"/>
+                <!-- name="searchFormInput"-->
+                <!--th:field="*{autoSuggest}"  hierboven toevoegen voor suggest?-->
+
+            </div>
+            <div>
+                FILTERS:
+            </div>
+            <div>
+                --------------------------------------------------------
+            </div>
+
+
+            <div class="form-group">
+                <label>minimum customer rating</label>
+                <input class="radio-inline" type="radio" th:field="*{rating}" th:each="val : ${ratingOptions}" th:value="${val}" th:text="${val.value}"/>
+            </div>
+            <div class="form-group">
+                <label>minimum quantity sold</label>
+                <input class="form-control" type="text" th:field="*{minQuantitySold}"/>
+            </div>
+            <div class="form-group">
+                <label>sort by</label>
+                <select th:field="*{sortOption}">
+                    <option th:each="option : ${sortOptions}" th:value="${option}" th:text="${option.description}"></option>
+                </select>
+            </div>
+            <input type="submit" value="Search" class="btn btn-primary">
+        </form>
+        <a th:href="${#mvc.url('PC#addFormPresent').build()}" class="btn btn-sm btn-warning">New Product</a>
+
+    </div>
+</body>
+</html>
