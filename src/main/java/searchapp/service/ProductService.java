@@ -22,14 +22,6 @@ public class ProductService {
     @Autowired
     private ProductHelper helper;
 
-//    public List<Product> search(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption){
-//        if (stringToSearch != null && !stringToSearch.equals("")) {                                                                                  //TODO: hier wel throwen??
-//            return repo.search(productQueryBuilder.buildMultiFieldQuery(stringToSearch, ratingFilter, minQuantitySold, sortOption));                 //TODO: beter om builder te autowiren in repo??
-//        } else {
-//            throw new IllegalArgumentException("search cannot be empty");
-//        }
-//    }
-
     public List<Product> searchFromSearchForm(SearchForm searchForm){                                                   //TODO: goe design-principe om specifieke input te routen naar algemenere methods
         return search(
                 searchForm.getInput(),
@@ -51,7 +43,7 @@ public class ProductService {
     public List<Product> simpleSearch(String stringToSearch){
         return helper.searchResponseToList(
                     repo.search(
-                            productQueryBuilder.buildMultiFieldQuery(stringToSearch, CustomerRatingOptions.ONE, 0, SearchSortOption.RELEVANCE)
+                            productQueryBuilder.buildMultiFieldQuery(stringToSearch, CustomerRatingOptions.ONE, 0, SearchSortOption.RELEVANCE)          //TODO: goe design om te hardcoden?
                     )
                 );
     }
@@ -68,6 +60,12 @@ public class ProductService {
         repo.delete(id);
     }
 
+    public void deleteByUpc12(String upc12){
+        repo.delete(
+                getIdByUpc12(upc12)
+        );
+    }
+
     public Product searchByUpc12(String upc12){
         return getOneById(
                     getIdByUpc12(upc12)
@@ -75,6 +73,16 @@ public class ProductService {
     }
 
     public String getIdByUpc12(String upc12){
+//        log.info("getting id for: " + upc12);
+//
+//        SearchRequest request = productQueryBuilder.buildSearchByUpc12(upc12);
+//        log.info("request: " + request.toString());
+//
+//        List<Product> list = helper.searchResponseToList(repo.search(request));
+//        log.info("size: " + list.size());
+//
+//        return "dummy";
+
         return helper.searchResponseToList(
                     repo.search(
                         productQueryBuilder.buildSearchByUpc12(
@@ -83,6 +91,12 @@ public class ProductService {
                     )
                 ).get(0)
                  .getId();
+    }                                                                       // TODO: NPE indien upc12 (nog) niet geregistreerd
+
+    public Product getOneByUpc12(String upc12){
+        return getOneById(
+                getIdByUpc12(upc12)
+        );
     }
 
     public void updateById(String id, Product newProductData){

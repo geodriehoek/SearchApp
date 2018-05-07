@@ -19,7 +19,7 @@ public class SwaggerConfig {
     public Docket swaggerApi(){
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("searchapp.controller"))
+                .apis(RequestHandlerSelectors.basePackage("searchapp.controller.api"))                                  //TODO: enkel voor API? of ook voor web-controller?
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo());

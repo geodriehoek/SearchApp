@@ -17,20 +17,20 @@ import java.util.Map;
 
 @Controller
 public class ProductController {
-    private final static String ROOT = "/products/";
+    private final static String PRODUCTS_ROOT_URL = "/products/";
     private Logger log = LoggerFactory.getLogger(ProductController.class);
     @Autowired
     private ProductService service;
     @Autowired
     private Mvc mvc;
-    private SearchForm searchForm = new SearchForm();
+    private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form
 
     @ModelAttribute("searchForm")
     public SearchForm initializeSearchForm(){
         return new SearchForm(searchForm);
     }
 
-    @GetMapping(path = ROOT + "search")
+    @GetMapping(path = PRODUCTS_ROOT_URL + "search")
     public String getSearchForm(Map<String, Object> model){
         model.put("searchForm", new SearchForm());
         model.put("sortOptions", SearchSortOption.values());
@@ -38,7 +38,7 @@ public class ProductController {
         return "search-product";
     }
 
-    @PostMapping(path = ROOT + "search")
+    @PostMapping(path = PRODUCTS_ROOT_URL + "search")
     public String processSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         log.debug(searchForm.toString());
         List<Product> resultList = service.search(
@@ -54,7 +54,7 @@ public class ProductController {
         return "search-result";
     }
 
-    @GetMapping(path = ROOT + "searchResult")
+    @GetMapping(path = PRODUCTS_ROOT_URL + "searchResult")
     public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         log.debug(searchForm.toString());
         List<Product> resultList = service.search(
@@ -69,7 +69,7 @@ public class ProductController {
         return "search-result";
     }
 
-    @GetMapping(path = ROOT + "details/{upc12}")
+    @GetMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")
     public String details(@PathVariable("upc12") String upc12,
                           Map<String, Object> model){
         model.put("updateProductForm", new Product(service.searchByUpc12(upc12)));
@@ -78,7 +78,7 @@ public class ProductController {
         return "product-details";
     }
 
-    @PostMapping(path = ROOT + "details/{upc12}")                                                                   //TODO: idem als delete, return naar search-result
+    @PostMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")                                                                   //TODO: idem als delete, return naar search-result
     public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct,
                                 @PathVariable("upc12") String upc12){
         service.updateByUpc12(upc12, updateProduct);
@@ -91,7 +91,7 @@ public class ProductController {
         return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
-    @GetMapping(path = ROOT + "/delete")
+    @GetMapping(path = PRODUCTS_ROOT_URL + "/delete")
     public String delete(@RequestParam String id){                                           //TODO: searchForm meekrijgen na post zodat lijst opnieuw kan getoond worden na delete
         service.delete(id);
         Thread thread = new Thread();
@@ -103,14 +103,14 @@ public class ProductController {
         return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
-    @GetMapping(path = ROOT + "/new")
+    @GetMapping(path = PRODUCTS_ROOT_URL + "/new")
     public String addFormPresent(Map<String, Object> model){
         model.put("newProductForm", new Product());
         model.put("ratingOptions", CustomerRatingOptions.values());
         return "new-product";
     }
 
-    @PostMapping(path = ROOT + "/new")
+    @PostMapping(path = PRODUCTS_ROOT_URL + "/new")
     public String addFormProcess(@ModelAttribute("newProductForm") Product newProduct){                                 //TODO: validation => Empty form indexed new product, slechte redirect
         service.add(newProduct);
 

@@ -3,7 +3,7 @@ package searchapp.domain;
 import java.util.Arrays;
 
 public class Product {
-    private String id;
+    private String id;                                                  //TODO: id fixen, momenteel upc12: business-id, doch dezelfde als _id
     private String brandName;
     private String productName;
     private Long customerRating;
@@ -18,7 +18,7 @@ public class Product {
     }
 
     public Product(Product other, double score, String id) {
-        this.id = other.id;
+//        this.id = other.id;
         this.brandName = other.brandName;
         this.productName = other.productName;
         this.customerRating = other.customerRating;
@@ -32,7 +32,7 @@ public class Product {
     }
 
     public Product(Product other) {
-        this.id = other.id;
+//        this.id = other.id;
         this.brandName = other.brandName;
         this.productName = other.productName;
         this.customerRating = other.customerRating;
