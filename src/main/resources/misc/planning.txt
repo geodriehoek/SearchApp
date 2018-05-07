@@ -4,10 +4,7 @@ algemene topics/vragen:
     - algemene return-info overkoepelt alle repo-methoden?
 
 
-TODO:   - @ModelAttribute vragen aan philippe of goed als instance-var/ elders met queryparams
-        - Thread.sleep() om NPE te vermijden
-            -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt => asynchronous checken
-        - scrollSearch      -> searchRequest.scroll @ repo || QueryBuilder
+TODO:   - scrollSearch      -> searchRequest.scroll @ repo || QueryBuilder
         - index-API?
         - suggesters
         - ajax facets
@@ -15,8 +12,13 @@ TODO:   - @ModelAttribute vragen aan philippe of goed als instance-var/ elders m
 
 kleine vragen philippe
 ----------------------
-    - ProductController.delete() is @GetMapping, moet dit DELETE zijn, of enkel voor rest-api?
-    - best practices rond enum-parameters van api-search
+    - RestAPI review
+        - ProductController.delete() is @GetMapping, moet dit DELETE zijn, of enkel voor rest-api?
+        - best practices rond enum-parameters van api-search
+    - @ModelAttribute vragen aan philippe of goed als instance-var/ elders met queryparams
+    - Thread.sleep() om NPE te vermijden
+        -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt => asynchronous checken
+
 
 
 VRAGEN THEORIE/PRACTICES VOOR PHILIPPE

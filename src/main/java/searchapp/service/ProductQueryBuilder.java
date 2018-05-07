@@ -49,6 +49,13 @@ public class ProductQueryBuilder {
                                 .fields(textFieldsListWithWeights)
                                 .fuzziness(1)                                           //fuzzi zou niet mogen bij cijfers/minder waarde
                         )
+                        .should(
+                                QueryBuilders.termQuery(
+                                        "brandName",
+                                        stringToSearch
+                                )
+                                        .boost(2)
+                        )
                         //voor search in grp_id
                         .should(
                                 QueryBuilders.prefixQuery(
@@ -57,11 +64,6 @@ public class ProductQueryBuilder {
                                 )
                                 .boost(20)                                              //zoniet is fuzzi-match in grp_id sterker
                         )
-//                        .should(
-//                                QueryBuilders.termQuery(
-//
-//                                )
-//                        )
                         .minimumShouldMatch(1)
                         //FILTERS
                         .must(
@@ -74,8 +76,7 @@ public class ProductQueryBuilder {
                         )
         )
         .size(1000)
-        .sort(sortOption.getValue(), SortOrder.DESC)
-        ;
+        .sort(sortOption.getValue(), SortOrder.DESC);
 
         return searchRequest.source(searchSourceBuilder);
     }

@@ -23,7 +23,7 @@ public class ProductController {
     private ProductService service;
     @Autowired
     private Mvc mvc;
-    private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form
+    private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
 
     @ModelAttribute("searchForm")
     public SearchForm initializeSearchForm(){
@@ -70,8 +70,7 @@ public class ProductController {
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")
-    public String details(@PathVariable("upc12") String upc12,
-                          Map<String, Object> model){
+    public String details(@PathVariable("upc12") String upc12, Map<String, Object> model){
         model.put("updateProductForm", new Product(service.searchByUpc12(upc12)));
         model.put("ratingOptions", CustomerRatingOptions.values());
 
@@ -79,8 +78,7 @@ public class ProductController {
     }
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")                                                                   //TODO: idem als delete, return naar search-result
-    public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct,
-                                @PathVariable("upc12") String upc12){
+    public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct, @PathVariable("upc12") String upc12){
         service.updateByUpc12(upc12, updateProduct);
         Thread thread = new Thread();
         try {                                                                                                           // TODO: asynchronisatie

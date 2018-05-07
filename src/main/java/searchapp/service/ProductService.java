@@ -33,6 +33,9 @@ public class ProductService {
 
     public List<Product> search(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption){
         log.info("searching: " + stringToSearch);
+//        if (stringToSearch == null || stringToSearch.equals("") || stringToSearch.equals(" ")){                       //TODO: mogelijkheid om lege query op te vangen?
+//            return matchAll();
+//        }
         return helper.searchResponseToList(
                     repo.search(
                             productQueryBuilder.buildMultiFieldQuery(stringToSearch, ratingFilter, minQuantitySold, sortOption)
@@ -73,16 +76,6 @@ public class ProductService {
     }
 
     public String getIdByUpc12(String upc12){
-//        log.info("getting id for: " + upc12);
-//
-//        SearchRequest request = productQueryBuilder.buildSearchByUpc12(upc12);
-//        log.info("request: " + request.toString());
-//
-//        List<Product> list = helper.searchResponseToList(repo.search(request));
-//        log.info("size: " + list.size());
-//
-//        return "dummy";
-
         return helper.searchResponseToList(
                     repo.search(
                         productQueryBuilder.buildSearchByUpc12(
@@ -107,9 +100,9 @@ public class ProductService {
     }
 
     public void updateByUpc12(String upc12, Product newProductData){
-        repo.update(
+        updateById(
                 getIdByUpc12(upc12),
-                helper.productToJson(newProductData)
+                newProductData
         );
     }
 
