@@ -1,0 +1,28 @@
+algemene topics/vragen:
+    - heeft philippe voorkeur tussen:
+        - extra logica om scheiding tussen getOne en getList te maken   <->    alles returned List, getOne is List.get(0)
+    - algemene return-info overkoepelt alle repo-methoden?
+
+
+TODO:   - @ModelAttribute vragen aan philippe of goed als instance-var/ elders met queryparams
+        - Thread.sleep() om NPE te vermijden
+            -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt => asynchronous checken
+        - scrollSearch      -> searchRequest.scroll @ repo || QueryBuilder
+        - index-API?
+        - suggesters
+        - ajax facets
+
+
+kleine vragen philippe
+----------------------
+    - ProductController.delete() is @GetMapping, moet dit DELETE zijn, of enkel voor rest-api?
+    - best practices rond enum-parameters van api-search
+
+
+VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
+--------------------------------------
+    - exception handling
+    - testing
+        -> beiden vnl theoretisch/conceptueel interessant aangezien praktischeid relatief simpel is??
+    - git??
+    - validatie
