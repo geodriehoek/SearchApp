@@ -52,6 +52,8 @@ public class ProductService {
     }
 
     public List<Product> searchWithPagination(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption, PaginationObject paginationObject){
+        PaginationObject newPagination = helper.interpretPagination(paginationObject);
+
         return helper.searchResponseToList(
                     repo.search(
                             productQueryBuilder.buildMultiFieldQueryWithPagination(
@@ -59,10 +61,11 @@ public class ProductService {
                                     ratingFilter,
                                     minQuantitySold,
                                     sortOption,
-                                    paginationObject.getFrom(),
-                                    paginationObject.getSize())
+                                    newPagination.getFrom(),
+                                    newPagination.getSize()
+                            )
                     )
-                );
+        );
     }
 
     public void delete(String id){

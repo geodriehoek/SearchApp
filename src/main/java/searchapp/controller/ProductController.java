@@ -26,6 +26,7 @@ public class ProductController {
     @Autowired
     private Mvc mvc;
     private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
+    private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode
 
     @ModelAttribute("searchForm")
     public SearchForm initializeSearchForm(){
@@ -43,33 +44,34 @@ public class ProductController {
     @PostMapping(path = PRODUCTS_ROOT_URL + "search")
     public String processSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         log.debug(searchForm.toString());
-        PaginationObject paginationObject = new PaginationObject(0, 10);                                        //TODO: unhardcode
+//        PaginationObject paginationObject = new PaginationObject(0, 10);                                        //TODO: unhardcode
         List<Product> resultList = service.searchWithPagination(
                                             searchForm.getInput(),
                                             searchForm.getRating(),
                                             searchForm.getMinQuantitySold(),
                                             searchForm.getSortOption(),
-                                            paginationObject                                                            //TODO: unhardcode
+                                            paginationObject
                                     );
         model.put("resultList", resultList);
         model.put("searchForm", searchForm);
-        model.put("paginationObject", paginationObject);                                             //TODO: unhardcode
+        model.put("paginationObject", paginationObject);
         this.searchForm = searchForm;
         model.put("numberOfResults", resultList.size());
         return "search-result";
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "searchResult")
-    public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
+    public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, @RequestParam PaginationDirection direction, Map<String, Object> model){
         log.debug(searchForm.toString());
+        paginationObject.setDirection(direction);
 
 
-
-        List<Product> resultList = service.search(
+        List<Product> resultList = service.searchWithPagination(
                                             searchForm.getInput(),
                                             searchForm.getRating(),
                                             searchForm.getMinQuantitySold(),
-                                            searchForm.getSortOption()
+                                            searchForm.getSortOption(),
+                                            paginationObject
                                     );
         model.put("resultList", resultList);
         model.put("searchForm", searchForm);

@@ -82,7 +82,7 @@ public class ProductHelper {
         }else if(pagination.getDirection() == PaginationDirection.BACK){
             from = from - size;
         }else{
-            log.error("wrong pagination direction");
+            log.error("wrong pagination direction");                                                                       //TODO: altijd hier
         }
 
         return new PaginationObject(from, size);
