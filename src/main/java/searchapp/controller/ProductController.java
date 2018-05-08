@@ -10,6 +10,8 @@ import searchapp.domain.Product;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
+import searchapp.service.PaginationDirection;
+import searchapp.service.PaginationObject;
 import searchapp.service.ProductService;
 
 import java.util.List;
@@ -41,14 +43,17 @@ public class ProductController {
     @PostMapping(path = PRODUCTS_ROOT_URL + "search")
     public String processSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         log.debug(searchForm.toString());
-        List<Product> resultList = service.search(
+        PaginationObject paginationObject = new PaginationObject(0, 10);                                        //TODO: unhardcode
+        List<Product> resultList = service.searchWithPagination(
                                             searchForm.getInput(),
                                             searchForm.getRating(),
                                             searchForm.getMinQuantitySold(),
-                                            searchForm.getSortOption()
+                                            searchForm.getSortOption(),
+                                            paginationObject                                                            //TODO: unhardcode
                                     );
         model.put("resultList", resultList);
         model.put("searchForm", searchForm);
+        model.put("paginationObject", paginationObject);                                             //TODO: unhardcode
         this.searchForm = searchForm;
         model.put("numberOfResults", resultList.size());
         return "search-result";
@@ -57,6 +62,9 @@ public class ProductController {
     @GetMapping(path = PRODUCTS_ROOT_URL + "searchResult")
     public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         log.debug(searchForm.toString());
+
+
+
         List<Product> resultList = service.search(
                                             searchForm.getInput(),
                                             searchForm.getRating(),

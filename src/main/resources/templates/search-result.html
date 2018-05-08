@@ -49,6 +49,12 @@
             </tr>
         </tbody>
     </table>
+    <div class="form-group">
+        <div class="row">
+            <a th:href="${#mvc.url('PC#getResultList').build()}" class="btn btn-sm btn-warning">--Previous Page--</a>
+            <a th:href="${#mvc.url('PC#getResultList').build()}" class="btn btn-sm btn-warning">--Next Page--</a>
+        </div>
+    </div>
 </div>
 
 </body>

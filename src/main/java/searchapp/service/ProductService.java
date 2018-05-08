@@ -51,10 +51,16 @@ public class ProductService {
                 );
     }
 
-    public List<Product> searchWithPagination(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption, int from, int size){
+    public List<Product> searchWithPagination(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption, PaginationObject paginationObject){
         return helper.searchResponseToList(
                     repo.search(
-                            productQueryBuilder.buildMultiFieldQueryWithPagination(stringToSearch, ratingFilter, minQuantitySold, sortOption, from, size)
+                            productQueryBuilder.buildMultiFieldQueryWithPagination(
+                                    stringToSearch,
+                                    ratingFilter,
+                                    minQuantitySold,
+                                    sortOption,
+                                    paginationObject.getFrom(),
+                                    paginationObject.getSize())
                     )
                 );
     }

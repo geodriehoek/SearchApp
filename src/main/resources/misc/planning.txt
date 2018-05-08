@@ -4,7 +4,11 @@ algemene topics/vragen:
     - algemene return-info overkoepelt alle repo-methoden?
 
 
-TODO:   - scrollSearch      -> searchRequest.scroll @ repo || QueryBuilder
+TODO:   - search From/Size impl
+            -> "A field with one unique value per document should be used as the tiebreaker of the sort specification.
+                Otherwise the sort order for documents that have the same sort values would be undefined.
+                The recommended way is to use the field _id which is certain to contain one unique value for each document."
+                https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-after.html
         - index-API?
         - suggesters
         - ajax facets
