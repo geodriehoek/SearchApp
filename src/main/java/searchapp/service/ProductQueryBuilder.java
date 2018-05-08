@@ -81,14 +81,15 @@ public class ProductQueryBuilder {
         return searchRequest.source(searchSourceBuilder);
     }
 
-    public SearchRequest buildMultiFieldQueryWithScroll(String stringToSearch,
-                                              CustomerRatingOptions ratingFilter,
-                                              long minQuantitySold,
-                                              SearchSortOption sortOption){
+    public SearchRequest buildMultiFieldQueryWithPagination(String stringToSearch,
+                                                            CustomerRatingOptions ratingFilter,
+                                                            long minQuantitySold,
+                                                            SearchSortOption sortOption,
+                                                            int from,
+                                                            int size){
 
         SearchRequest searchRequest = new SearchRequest("products");
         searchRequest.types("product");
-        searchRequest.scroll(TimeValue.timeValueMinutes(10L));
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         searchSourceBuilder.query(
@@ -123,7 +124,8 @@ public class ProductQueryBuilder {
                                         .gte(minQuantitySold)
                         )
         )
-                .size(1000)
+                .from(from)
+                .size(size)
                 .sort(sortOption.getValue(), SortOrder.DESC)
         ;
 

@@ -45,22 +45,6 @@ public class ProductRepository {
         return response;
     }
 
-    public SearchResponse searchWithScroll(SearchRequest searchRequest){
-        SearchResponse response = null;
-        List<Product> resultList = new ArrayList<>();
-
-        try{
-            response = client.search(searchRequest);
-        } catch (IOException e){
-            log.error("-------------------------------");
-            log.error("------@ProductRepo.search------");
-            log.error("-------------------------------");
-            e.printStackTrace();
-        }
-
-        return response;
-    }
-
     public GetResponse getById(String id){
         GetResponse getResponse = null;
         GetRequest getRequest = new GetRequest(
