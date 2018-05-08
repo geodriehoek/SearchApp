@@ -1,5 +1,9 @@
 package searchapp.service;
 
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchScrollRequest;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.TimeValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +14,7 @@ import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
 import searchapp.repository.ProductRepository;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -21,8 +26,10 @@ public class ProductService {
     private ProductRepository repo;
     @Autowired
     private ProductHelper helper;
+    @Autowired
+    private RestHighLevelClient client;                                                                                 //TODO: temporary => remove
 
-    public List<Product> searchFromSearchForm(SearchForm searchForm){                                                   //TODO: goe design-principe om specifieke input te routen naar algemenere methods
+    public List<Product> searchFromSearchForm(SearchForm searchForm){                                                   //TODO: goe design-principe om specifieke input te routen naar algemenere methods // slechte naam
         return search(
                 searchForm.getInput(),
                 searchForm.getRating(),
@@ -51,12 +58,30 @@ public class ProductService {
                 );
     }
 
-    public List<Product> searchWithScroll(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption){
-        return helper.searchResponseToList(
-                    repo.search(
-                            productQueryBuilder.buildMultiFieldQuery(stringToSearch, ratingFilter, minQuantitySold, sortOption)
-                    )
-                );
+    public SearchResponse searchScrollStart(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption){
+        SearchResponse response = repo.searchWithScrollStart(
+                                        productQueryBuilder.buildMultiFieldQueryWithScroll(stringToSearch, ratingFilter, minQuantitySold, sortOption)
+                                    );
+        return response;
+//        return helper.searchResponseToList(
+//                    repo.searchWithScrollStart(
+//                            productQueryBuilder.buildMultiFieldQueryWithScroll(stringToSearch, ratingFilter, minQuantitySold, sortOption)
+//                    )
+//                );
+    }
+
+    public SearchResponse searchScrollContinue(String scrollId){                                                         // TODO: list<Object> ?? {Product1, Product2, scrollId}
+        SearchResponse response = null;
+        SearchScrollRequest request = new SearchScrollRequest(scrollId);
+        request.scroll(TimeValue.timeValueMinutes(5));
+
+        try {
+            response = client.searchScroll(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return response;
     }
 
     public void delete(String id){
