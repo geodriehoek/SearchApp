@@ -69,4 +69,12 @@ public class ProductHelper {
         }
         return product;
     }
+
+    public List<Product> getHitsFromScroll(SearchResponse response){                                                  //TODO: sowieso identiek als hierboven?
+        return null;
+    }
+
+    public String getScrollIdFromResponse(SearchResponse response){
+        return response.getScrollId();
+    }
 }

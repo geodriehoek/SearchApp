@@ -32,8 +32,8 @@ public class ProductQueryBuilder {
                                               long minQuantitySold,
                                               SearchSortOption sortOption){
 
-        SearchRequest searchRequest = new SearchRequest("products");
-        searchRequest.types("product");
+        SearchRequest request = new SearchRequest("products");
+        request.types("product");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         searchSourceBuilder.query(
@@ -78,17 +78,17 @@ public class ProductQueryBuilder {
         .size(1000)
         .sort(sortOption.getValue(), SortOrder.DESC);
 
-        return searchRequest.source(searchSourceBuilder);
+        return request.source(searchSourceBuilder);
     }
 
     public SearchRequest buildMultiFieldQueryWithScroll(String stringToSearch,
                                               CustomerRatingOptions ratingFilter,
                                               long minQuantitySold,
-                                              SearchSortOption sortOption){
+                                              SearchSortOption sortOption/*, int resultSizePerScroll*/){
 
-        SearchRequest searchRequest = new SearchRequest("products");
-        searchRequest.types("product");
-        searchRequest.scroll(TimeValue.timeValueMinutes(10L));
+        SearchRequest request = new SearchRequest("products");
+        request.types("product");
+        request.scroll(TimeValue.timeValueMinutes(5L));
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         searchSourceBuilder.query(
@@ -123,17 +123,17 @@ public class ProductQueryBuilder {
                                         .gte(minQuantitySold)
                         )
         )
-                .size(1000)
+                .size(10)
                 .sort(sortOption.getValue(), SortOrder.DESC)
         ;
 
-        return searchRequest.source(searchSourceBuilder);
+        return request.source(searchSourceBuilder);
     }
 
     public SearchRequest buildSearchByUpc12(String upc12){
 
-        SearchRequest searchRequest = new SearchRequest("products");
-        searchRequest.types("product");
+        SearchRequest request = new SearchRequest("products");
+        request.types("product");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         searchSourceBuilder.query(
@@ -143,17 +143,17 @@ public class ProductQueryBuilder {
                 )
         );
 
-        return searchRequest.source(searchSourceBuilder);
+        return request.source(searchSourceBuilder);
     }
 
     public SearchRequest buildMatchAllQuery(){
-        SearchRequest searchRequest = new SearchRequest("products");
-        searchRequest.types("product");
+        SearchRequest request = new SearchRequest("products");
+        request.types("product");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(
                 QueryBuilders
                         .matchAllQuery()
                 );
-        return searchRequest.source(searchSourceBuilder);
+        return request.source(searchSourceBuilder);
     }
 }

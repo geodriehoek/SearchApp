@@ -1,5 +1,6 @@
 package searchapp.controller;
 
+import org.elasticsearch.action.search.SearchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.spring5.expression.Mvc;
 import searchapp.domain.Product;
 import searchapp.domain.web.CustomerRatingOptions;
+import searchapp.domain.web.ScrollObject;
 import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
+import searchapp.service.ProductHelper;
 import searchapp.service.ProductService;
 
 import java.util.List;
@@ -24,10 +27,17 @@ public class ProductController {
     @Autowired
     private Mvc mvc;
     private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
+    private ScrollObject scrollObject = new ScrollObject();
+    @Autowired
+    private ProductHelper helper;                                                                                       //TODO: in beste geval niet hier
 
     @ModelAttribute("searchForm")
     public SearchForm initializeSearchForm(){
         return new SearchForm(searchForm);
+    }                       //TODO: rename
+    @ModelAttribute("scrollObject")
+    public ScrollObject getScrollObject(){
+        return new ScrollObject(scrollObject);
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "search")
@@ -67,7 +77,7 @@ public class ProductController {
         model.put("searchForm", searchForm);
         model.put("numberOfResults", resultList.size());
         return "search-result";
-    }
+    }           //TODO: nietmeer nodig bij scrollsearch?
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")
     public String details(@PathVariable("upc12") String upc12, Map<String, Object> model){
@@ -116,4 +126,56 @@ public class ProductController {
         log.debug(url);
         return url;
     }
+
+
+
+    // scroll is hier niet voor gemaakt
+    // ------------------ SCROLL ----------------------- //
+
+    @GetMapping(path = PRODUCTS_ROOT_URL + "scroll/search")
+    public String getSearchScrollForm(Map<String, Object> model){
+        model.put("searchForm", new SearchForm());
+        model.put("sortOptions", SearchSortOption.values());
+        model.put("ratingOptions", CustomerRatingOptions.values());
+        return "search-product";
+    }
+
+    @PostMapping(path = PRODUCTS_ROOT_URL + "scroll/search")
+    public String processSearchScrollForm(@ModelAttribute("searchForm") SearchForm searchForm, @ModelAttribute("scrollObject") ScrollObject scrollObject, Map<String, Object> model){
+        log.debug(searchForm.toString());
+        SearchResponse response = service.searchScrollStart(
+                searchForm.getInput(),
+                searchForm.getRating(),
+                searchForm.getMinQuantitySold(),
+                searchForm.getSortOption()
+        );
+        List<Product> resultList = helper.searchResponseToList(response);
+        model.put("resultList", resultList);
+        model.put("searchForm", searchForm);
+        model.put("numberOfResults", resultList.size());
+
+        String scrollId = helper.getScrollIdFromResponse(response);
+        this.scrollObject = new ScrollObject(scrollId);
+        log.info("start scrollId: " + scrollId );
+        model.put("scrollObject", this.scrollObject);                                                                        //TODO: als sessionAttribute en dan updaten??
+        return "search-result-scroll";
+    }
+
+    @GetMapping(path = PRODUCTS_ROOT_URL + "scroll/searchResult")                                                       //TODO: wat met omgekeerde richting?
+    public String getScrollResultList(@ModelAttribute("searchForm") SearchForm searchForm/*, @ModelAttribute("scrollObject") ScrollObject scrollObject*/, Map<String, Object> model){
+        SearchResponse response = service.searchScrollContinue(this.scrollObject.getId());
+
+        List<Product> resultList = helper.searchResponseToList(response);
+        model.put("resultList", resultList);
+        model.put("searchForm", searchForm);
+        model.put("numberOfResults", resultList.size());
+
+//        String scrollIdContinue = response.getScrollId();
+//        this.scrollObject = new ScrollObject(scrollIdContinue);
+        log.info("continue scrollId: " + this.scrollObject.getId());                                                    //TODO: niet nodig in productie
+        model.put("scrollObject", this.scrollObject);                                                                   //TODO: beiden dus
+
+        return "search-result-scroll";
+    }
+
 }

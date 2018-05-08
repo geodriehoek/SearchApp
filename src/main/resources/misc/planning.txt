@@ -4,10 +4,13 @@ algemene topics/vragen:
     - algemene return-info overkoepelt alle repo-methoden?
 
 
-TODO:   - scrollSearch      -> searchRequest.scroll @ repo || QueryBuilder
+TODO:   - scrollSearch weg => search From/Size
         - index-API?
         - suggesters
-        - ajax facets
+        - ajax
+            -> facets
+            -> scrolling
+            -> delete
 
 
 kleine vragen philippe

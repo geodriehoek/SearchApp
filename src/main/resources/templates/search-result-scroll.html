@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>searchResult</title>
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css"/>
+</head>
+<body>
+<div class="container">
+
+    <div class="jumbotron">
+        <h1>Search Results</h1>
+        <h3><a th:href="${#mvc.url('PC#getSearchForm').build()}">Back to search</a></h3>
+    </div>
+    <div class="row">Search for: </div>
+    <div class="row" th:text="${searchForm.input}"></div>
+    <div class="row">Number of hits: </div>
+    <div class="row" th:text="${numberOfResults}"></div>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>group id</th>
+                <th>brandname</th>
+                <th>productname</th>
+                <th>price</th>
+                <th>customer rating</th>
+                <th>upc-12</th>
+                <th>quantity sold</th>
+                <th>_score</th>
+                <th>delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="product : ${resultList}">
+                <td th:text="${product.grp_id}"></td>
+                <td th:text="${product.brandName}"></td>
+                <td th:text="${product.productName}"></td>
+                <td th:text="${product.price}"></td>
+                <td th:text="${product.customerRating}"></td>
+                <td>
+                    <a th:href="${#mvc.url('PC#details').arg(0, product.upc12).build()}"
+                       th:text="${product.upc12}"></a>
+                </td>
+                <td th:text="${product.quantitySold}"></td>
+                <td th:text="${product.score}"></td>
+                <td>
+                    <a th:href="${#mvc.url('PC#delete').arg(0, product.id).build()}" class="btn btn-sm btn-warning">DELETE</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+        <div class="form-group">
+            <label for="sid">scrollId</label>
+            <input class="form-control" type="text" id="sid" th:field="${scrollObject.id}"/>
+            <a th:href="${#mvc.url('PC#getScrollResultList').build()}" class="btn btn-sm btn-warning">--Next Page--</a>
+            <!--<a th:href="${#mvc.url('PC#getScrollResultList').arg(0, scrollObject.id).build()}" class="btn btn-sm btn-warning">&#45;&#45;Next Page&#45;&#45;</a>-->
+        </div>
+</div>
+
+</body>
+</html>
