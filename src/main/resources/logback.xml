@@ -12,8 +12,10 @@
 
     <!--<logger name="org.elasticsearch" level="DEBUG"/>-->
     <logger name="org.thymeleaf" level="INFO"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="searchapp" level="DEBUG"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
 
