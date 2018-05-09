@@ -88,8 +88,8 @@ public class ProductQueryBuilder {
                                                             int from,
                                                             int size){
 
-        SearchRequest searchRequest = new SearchRequest("products");
-        searchRequest.types("product");
+        SearchRequest request = new SearchRequest("products");
+        request.types("product");
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
         searchSourceBuilder.query(
@@ -129,7 +129,7 @@ public class ProductQueryBuilder {
                 .sort(sortOption.getValue(), SortOrder.DESC)
         ;
 
-        return searchRequest.source(searchSourceBuilder);
+        return request.source(searchSourceBuilder);
     }
 
     public SearchRequest buildSearchByUpc12(String upc12){

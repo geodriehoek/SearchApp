@@ -51,8 +51,8 @@
     </table>
     <div class="form-group">
         <div class="row">
-            <a th:href="${#mvc.url('PC#getResultList').arg(0, BACK).build()}" class="btn btn-sm btn-warning">--Previous Page--</a>
-            <a th:href="${#mvc.url('PC#getResultList').arg(0, FORWARD).build()}" class="btn btn-sm btn-warning">--Next Page--</a>
+            <a th:href="${#mvc.url('PC#getPrevPage').build()}" class="btn btn-sm btn-light"> --Previous Page-- </a>
+            <a th:href="${#mvc.url('PC#getNextPage').build()}" class="btn btn-sm btn-light"> --Next Page-- </a>
         </div>
     </div>
 </div>

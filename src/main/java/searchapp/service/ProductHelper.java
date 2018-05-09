@@ -73,18 +73,18 @@ public class ProductHelper {
         return product;
     }
 
-    public PaginationObject interpretPagination(PaginationObject pagination){
-        int from = pagination.getFrom();
-        int size = pagination.getSize();
-
-        if(pagination.getDirection() == PaginationDirection.FORWARD){                                                   //TODO: error-bounds
-            from = from + size;
-        }else if(pagination.getDirection() == PaginationDirection.BACK){
-            from = from - size;
-        }else{
-            log.error("wrong pagination direction");                                                                       //TODO: altijd hier
-        }
-
-        return new PaginationObject(from, size);
-    }
+//    public PaginationObject interpretPagination(PaginationObject pagination){
+//        int from = pagination.getFrom();
+//        int size = pagination.getSize();
+//
+//        if(pagination.getDirection() == PaginationDirection.FORWARD){                                                   //TODO: error-bounds
+//            from = from + size;
+//        }else if(pagination.getDirection() == PaginationDirection.BACK){
+//            from = from - size;
+//        }else{
+//            log.error("wrong pagination direction");                                                                       //TODO: altijd hier
+//        }
+//
+//        return new PaginationObject(from, size, pagination.getDirection());
+//    }                                       //TODO: mag weg, overgezet naar klasse-methode
 }

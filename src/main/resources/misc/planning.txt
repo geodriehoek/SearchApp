@@ -2,13 +2,27 @@ algemene topics/vragen:
     - heeft philippe voorkeur tussen:
         - extra logica om scheiding tussen getOne en getList te maken   <->    alles returned List, getOne is List.get(0)
     - algemene return-info overkoepelt alle repo-methoden?
+    - veel kleine object-klassen gemaakt: pagination: 2; searchform: 3
+        -> goede oplossing?
+            -> geneste klassen beter?
+                - paginationDirection subklasse van paginationObject
+                - ratingOptions, sortOptions subklasse van searchForm
 
+GEDAAN:
+    - index/delete/update
+    - REST api/swagger
+    - refresh van resultList na details/delete.
+        -> instance var van Controller nl. searchForm
+    - pagination
+        -> search/from
+        -> href -> getDIRECTIONPage() -> wijziging PaginationObject.direction -> redirect: resultList
 
 TODO:   - search From/Size impl
             -> "A field with one unique value per document should be used as the tiebreaker of the sort specification.
                 Otherwise the sort order for documents that have the same sort values would be undefined.
                 The recommended way is to use the field _id which is certain to contain one unique value for each document."
                 https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-after.html
+            -> alternatief search_after (gelijkaardig aan scroll, doch stateless)
         - index-API?
         - suggesters
         - ajax facets
@@ -19,6 +33,7 @@ kleine vragen philippe
     - RestAPI review
         - ProductController.delete() is @GetMapping, moet dit DELETE zijn, of enkel voor rest-api?
         - best practices rond enum-parameters van api-search
+    - pagination review
     - @ModelAttribute vragen aan philippe of goed als instance-var/ elders met queryparams
     - Thread.sleep() om NPE te vermijden
         -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt => asynchronous checken

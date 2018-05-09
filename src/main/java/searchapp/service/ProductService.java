@@ -14,7 +14,7 @@ import java.util.List;
 
 @Service
 public class ProductService {
-    Logger log = LoggerFactory.getLogger(ProductService.class);
+    private Logger log = LoggerFactory.getLogger(ProductService.class);
     @Autowired
     private ProductQueryBuilder productQueryBuilder;
     @Autowired
@@ -52,8 +52,6 @@ public class ProductService {
     }
 
     public List<Product> searchWithPagination(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption, PaginationObject paginationObject){
-        PaginationObject newPagination = helper.interpretPagination(paginationObject);
-
         return helper.searchResponseToList(
                     repo.search(
                             productQueryBuilder.buildMultiFieldQueryWithPagination(
@@ -61,8 +59,8 @@ public class ProductService {
                                     ratingFilter,
                                     minQuantitySold,
                                     sortOption,
-                                    newPagination.getFrom(),
-                                    newPagination.getSize()
+                                    paginationObject.getFrom(),
+                                    paginationObject.getSize()
                             )
                     )
         );
@@ -78,11 +76,11 @@ public class ProductService {
         );
     }
 
-    public Product searchByUpc12(String upc12){
-        return getOneById(
-                    getIdByUpc12(upc12)
-            );
-    }
+//    public Product searchByUpc12(String upc12){
+//        return getOneById(
+//                    getIdByUpc12(upc12)
+//            );
+//    }
 
     public String getIdByUpc12(String upc12){
         return helper.searchResponseToList(

@@ -12,6 +12,7 @@ import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
 import searchapp.service.PaginationDirection;
 import searchapp.service.PaginationObject;
+import searchapp.service.ProductHelper;
 import searchapp.service.ProductService;
 
 import java.util.List;
@@ -27,6 +28,8 @@ public class ProductController {
     private Mvc mvc;
     private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
     private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode
+    @Autowired
+    private ProductHelper helper;
 
     @ModelAttribute("searchForm")
     public SearchForm initializeSearchForm(){
@@ -42,9 +45,8 @@ public class ProductController {
     }
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "search")
-    public String processSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
+    public String postSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         log.debug(searchForm.toString());
-//        PaginationObject paginationObject = new PaginationObject(0, 10);                                        //TODO: unhardcode
         List<Product> resultList = service.searchWithPagination(
                                             searchForm.getInput(),
                                             searchForm.getRating(),
@@ -55,16 +57,15 @@ public class ProductController {
         model.put("resultList", resultList);
         model.put("searchForm", searchForm);
         model.put("paginationObject", paginationObject);
+        log.info("pagination: " + paginationObject);
         this.searchForm = searchForm;
         model.put("numberOfResults", resultList.size());
         return "search-result";
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "searchResult")
-    public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, @RequestParam PaginationDirection direction, Map<String, Object> model){
-        log.debug(searchForm.toString());
-        paginationObject.setDirection(direction);
-
+    public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
+        log.info("pagination: " + paginationObject);
 
         List<Product> resultList = service.searchWithPagination(
                                             searchForm.getInput(),
@@ -79,9 +80,23 @@ public class ProductController {
         return "search-result";
     }
 
+    @GetMapping(path = PRODUCTS_ROOT_URL + "nextPage")
+    public String getNextPage(){
+        paginationObject.setDirection(PaginationDirection.FORWARD);
+         paginationObject.interpretDirection();
+        return "redirect:" + mvc.url("PC#getResultList").build();
+    }
+
+    @GetMapping(path = PRODUCTS_ROOT_URL + "previousPage")
+    public String getPrevPage(){
+        paginationObject.setDirection(PaginationDirection.BACK);
+        paginationObject.interpretDirection();
+        return "redirect:" + mvc.url("PC#getResultList").build();
+    }
+
     @GetMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")
     public String details(@PathVariable("upc12") String upc12, Map<String, Object> model){
-        model.put("updateProductForm", new Product(service.searchByUpc12(upc12)));
+        model.put("updateProductForm", new Product(service.getOneByUpc12(upc12)));
         model.put("ratingOptions", CustomerRatingOptions.values());
 
         return "product-details";
@@ -112,18 +127,24 @@ public class ProductController {
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "/new")
-    public String addFormPresent(Map<String, Object> model){
+    public String getAddForm(Map<String, Object> model){
         model.put("newProductForm", new Product());
         model.put("ratingOptions", CustomerRatingOptions.values());
         return "new-product";
     }
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "/new")
-    public String addFormProcess(@ModelAttribute("newProductForm") Product newProduct){                                 //TODO: validation => Empty form indexed new product, slechte redirect
+    public String postAddForm(@ModelAttribute("newProductForm") Product newProduct){                                 //TODO: validation => Empty form indexed new product, slechte redirect
         service.add(newProduct);
 
-        String url = "redirect:" + mvc.url("PC#details").build() + newProduct.getUpc12();
-        log.debug(url);
-        return url;
+        Thread thread = new Thread();
+        try {                                                                                                           // TODO: asynchronisatie
+            thread.sleep(1000L);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+//        String url = "redirect:" + mvc.url("PC#details").build() + newProduct.getUpc12();
+//        log.debug(url);
+        return "redirect:" + mvc.url("PC#details").build() + newProduct.getUpc12();                        //TODO: "back to results" van details na newProduct crasht
     }
 }
