@@ -18,19 +18,19 @@ GEDAAN:
         -> search/from
         -> href -> getDIRECTIONPage() -> wijziging PaginationObject.direction -> redirect: resultList
 
-TODO:   - search From/Size impl
-            => momenteel nog compleet onafhankelijk van limiet van results/ waar checken?
-            -> "A field with one unique value per document should be used as the tiebreaker of the sort specification.
-                Otherwise the sort order for documents that have the same sort values would be undefined.
-                The recommended way is to use the field _id which is certain to contain one unique value for each document."
-                https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-after.html
-            -> alternatief search_after (gelijkaardig aan scroll, doch stateless)
-        - index from file?
+TODO:   - index from file?
         - exceptioncatching en logging optimaliseren -> aspects?
             -> productRepository
             -> productHelper
         - suggesters
         - ajax facets
+        - search From/Size impl
+              => momenteel nog compleet onafhankelijk van limiet van results/ waar checken?
+                   -> "A field with one unique value per document should be used as the tiebreaker of the sort specification.
+                       Otherwise the sort order for documents that have the same sort values would be undefined.
+                       The recommended way is to use the field _id which is certain to contain one unique value for each document."
+                       https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-after.html
+                   -> alternatief search_after (gelijkaardig aan scroll, doch stateless)
 
 
 kleine vragen philippe
@@ -54,3 +54,5 @@ VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
     - git??
     - validatie
     - logging
+        -> waar, welke info?
+        -> dev vs. prod
