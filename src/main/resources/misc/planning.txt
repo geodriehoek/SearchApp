@@ -25,11 +25,6 @@ TODO:   - search From/Size impl
                 The recommended way is to use the field _id which is certain to contain one unique value for each document."
                 https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-after.html
             -> alternatief search_after (gelijkaardig aan scroll, doch stateless)
-        - id weg uit Product, normaal nergens gebruikt, zeker checken
-            -> ProductController.delete(id) zal mogelijks moeilijk doen
-            -> grp_id is idem als _id => alle methoden die op upc12 zoeken -> op grp_id zoeken
-            -> helper.GrpIdFromUpc12(upc12) returns String Grp_id
-            -> service.GrpIdFromUpc12(upc12) returns String Grp_id
         - index from file?
         - exceptioncatching en logging optimaliseren -> aspects?
             -> productRepository
