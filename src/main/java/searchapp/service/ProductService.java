@@ -41,7 +41,7 @@ public class ProductService {
                             productQueryBuilder.buildMultiFieldQuery(stringToSearch, ratingFilter, minQuantitySold, sortOption)
                     )
                 );
-    }
+    }           //TODO: behouden voor RESTapi, of alles weg ifv ...WithPagination
 
     public List<Product> simpleSearch(String stringToSearch){
         return helper.searchResponseToList(
@@ -66,7 +66,7 @@ public class ProductService {
         );
     }
 
-    public void delete(String id){
+    public void deleteById(String id){
         repo.delete(id);
     }
 
@@ -82,7 +82,7 @@ public class ProductService {
 //            );
 //    }
 
-    public String getIdByUpc12(String upc12){
+    public String getIdByUpc12(String upc12){                                                                           //enkel hier correct aangezien upc12 uniek is
         return helper.searchResponseToList(
                     repo.search(
                         productQueryBuilder.buildSearchByUpc12(
@@ -95,7 +95,9 @@ public class ProductService {
 
     public Product getOneByUpc12(String upc12){
         return getOneById(
-                getIdByUpc12(upc12)
+                getIdByUpc12(
+                        upc12
+                )
         );
     }
 

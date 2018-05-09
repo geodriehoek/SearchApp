@@ -18,12 +18,18 @@ GEDAAN:
         -> href -> getDIRECTIONPage() -> wijziging PaginationObject.direction -> redirect: resultList
 
 TODO:   - search From/Size impl
+            => momenteel nog compleet onafhankelijk van limiet van results/ waar checken?
             -> "A field with one unique value per document should be used as the tiebreaker of the sort specification.
                 Otherwise the sort order for documents that have the same sort values would be undefined.
                 The recommended way is to use the field _id which is certain to contain one unique value for each document."
                 https://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-search-after.html
             -> alternatief search_after (gelijkaardig aan scroll, doch stateless)
-        - index-API?
+        - id weg uit Product, normaal nergens gebruikt, zeker checken
+            -> ProductController.delete(id) zal mogelijks moeilijk doen
+        - index from file?
+        - exceptioncatching en logging optimaliseren -> aspects?
+            -> productRepository
+            -> productHelper
         - suggesters
         - ajax facets
 
@@ -32,11 +38,12 @@ kleine vragen philippe
 ----------------------
     - RestAPI review
         - ProductController.delete() is @GetMapping, moet dit DELETE zijn, of enkel voor rest-api?
-        - best practices rond enum-parameters van api-search
+        - best practices rond enum-parameters van api-search: api/search/{string}/{customerRating}/...
     - pagination review
     - @ModelAttribute vragen aan philippe of goed als instance-var/ elders met queryparams
     - Thread.sleep() om NPE te vermijden
-        -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt => asynchronous checken
+        -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt
+            -> mogelijkheid: asynchrone melding van save, waarna redirect?
 
 
 
@@ -47,3 +54,4 @@ VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
         -> beiden vnl theoretisch/conceptueel interessant aangezien praktischeid relatief simpel is??
     - git??
     - validatie
+    - logging

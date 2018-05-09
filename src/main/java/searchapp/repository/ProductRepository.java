@@ -62,7 +62,7 @@ public class ProductRepository {
         return getResponse;
     }
 
-    //TODO: update/delete; verschillende slaaggevallen opvangen. wat met return info?
+    //TODO: update/deleteById; verschillende slaaggevallen opvangen. wat met return info?
     public void update(String id, String jsonStringNewData){
         UpdateResponse response = new UpdateResponse();
 

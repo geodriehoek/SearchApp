@@ -124,7 +124,7 @@ public class Product {
     }
 
     @Override
-    public String toString() {
+    public String toString() {                                                                                          //TODO: weg
         return "Product{" +
                 "id='" + id + '\'' +
                 ", brandName='" + brandName + '\'' +

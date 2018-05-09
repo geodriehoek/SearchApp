@@ -102,7 +102,7 @@ public class ProductController {
         return "product-details";
     }
 
-    @PostMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")                                                                   //TODO: idem als delete, return naar search-result
+    @PostMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")                                                                   //TODO: idem als deleteById, return naar search-result
     public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct, @PathVariable("upc12") String upc12){
         service.updateByUpc12(upc12, updateProduct);
         Thread thread = new Thread();
@@ -114,9 +114,9 @@ public class ProductController {
         return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
-    @GetMapping(path = PRODUCTS_ROOT_URL + "/delete")
-    public String delete(@RequestParam String id){                                           //TODO: searchForm meekrijgen na post zodat lijst opnieuw kan getoond worden na delete
-        service.delete(id);
+    @GetMapping(path = PRODUCTS_ROOT_URL + "/deleteById")
+    public String delete(@RequestParam String id){                                           //TODO: searchForm meekrijgen na post zodat lijst opnieuw kan getoond worden na deleteById
+        service.deleteById(id);
         Thread thread = new Thread();
         try {                                                                                                           // TODO: asynchronisatie
             thread.sleep(1000L);

@@ -66,9 +66,9 @@ public class ProductHelper {
                 e.printStackTrace();
             }
         }else{
-            System.out.println("------------");
-            System.out.println("NO SUCH PRODUCT");
-            System.out.println("------------");
+            log.error("------------");
+            log.error("NO SUCH PRODUCT");
+            log.error("------------");
         }
         return product;
     }

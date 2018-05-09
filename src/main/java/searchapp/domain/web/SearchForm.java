@@ -66,7 +66,7 @@ public class SearchForm {
     }
 
     @Override
-    public String toString() {
+    public String toString() {                                                                                          //TODO: weg, enkel logging-nut
         return "SearchForm{" +
                 "id='" + id + '\'' +
                 ", input='" + input + '\'' +
