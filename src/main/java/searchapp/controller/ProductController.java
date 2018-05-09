@@ -94,17 +94,17 @@ public class ProductController {
         return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
-    @GetMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")
-    public String details(@PathVariable("upc12") String upc12, Map<String, Object> model){
-        model.put("updateProductForm", new Product(service.getOneByUpc12(upc12)));
+    @GetMapping(path = PRODUCTS_ROOT_URL + "details/{grpId}")
+    public String details(@PathVariable("grpId") String grpId, Map<String, Object> model){
+        model.put("updateProductForm", new Product(service.getOneByGrpId(grpId)));
         model.put("ratingOptions", CustomerRatingOptions.values());
 
         return "product-details";
     }
 
-    @PostMapping(path = PRODUCTS_ROOT_URL + "details/{upc12}")                                                                   //TODO: idem als deleteById, return naar search-result
-    public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct, @PathVariable("upc12") String upc12){
-        service.updateByUpc12(upc12, updateProduct);
+    @PostMapping(path = PRODUCTS_ROOT_URL + "details/{grpId}")                                                                   //TODO: idem als deleteById, return naar search-result
+    public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct, @PathVariable("grpId") String grpId){
+        service.updateByGrpId(grpId, updateProduct);
         Thread thread = new Thread();
         try {                                                                                                           // TODO: asynchronisatie
             thread.sleep(1000L);
@@ -114,9 +114,9 @@ public class ProductController {
         return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
-    @GetMapping(path = PRODUCTS_ROOT_URL + "/deleteById")
-    public String delete(@RequestParam String id){                                           //TODO: searchForm meekrijgen na post zodat lijst opnieuw kan getoond worden na deleteById
-        service.deleteById(id);
+    @GetMapping(path = PRODUCTS_ROOT_URL + "/delete")
+    public String delete(@RequestParam String grpId){                                           //TODO: searchForm meekrijgen na post zodat lijst opnieuw kan getoond worden na deleteById
+        service.deleteByGrpId(grpId);
         Thread thread = new Thread();
         try {                                                                                                           // TODO: asynchronisatie
             thread.sleep(1000L);
@@ -145,6 +145,6 @@ public class ProductController {
         }
 //        String url = "redirect:" + mvc.url("PC#details").build() + newProduct.getUpc12();
 //        log.debug(url);
-        return "redirect:" + mvc.url("PC#details").build() + newProduct.getUpc12();                        //TODO: "back to results" van details na newProduct crasht
+        return "redirect:" + mvc.url("PC#details").build() + newProduct.getGrp_id();                        //TODO: "back to results" van details na newProduct crasht
     }
 }

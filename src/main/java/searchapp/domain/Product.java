@@ -3,7 +3,7 @@ package searchapp.domain;
 import java.util.Arrays;
 
 public class Product {
-    private String id;                                                  //TODO: id fixen, momenteel upc12: business-id, doch dezelfde als _id
+//    private String id;                                                  //TODO: id fixen, momenteel group_id: business-id, doch dezelfde als _id
     private String brandName;
     private String productName;
     private Long customerRating;
@@ -11,14 +11,13 @@ public class Product {
     private String grp_id;
     private Long quantitySold;
     private String upc12;
-    private String[] suggestions;
+//    private String[] suggestions;
     private double score;                                               //TODO: na analyse weg// via update voegt het momenteel een "score"-field toe hierdoor
 
     public Product() {                                                  //TODO: constructors optimaliseren
     }
 
-    public Product(Product other, double score, String id) {
-//        this.id = other.id;
+    public Product(Product other, double score) {
         this.brandName = other.brandName;
         this.productName = other.productName;
         this.customerRating = other.customerRating;
@@ -26,13 +25,10 @@ public class Product {
         this.grp_id = other.grp_id;
         this.quantitySold = other.quantitySold;
         this.upc12 = other.upc12;
-        this.suggestions = other.suggestions;
         this.score = score;
-        this.id = id;
     }
 
     public Product(Product other) {
-//        this.id = other.id;
         this.brandName = other.brandName;
         this.productName = other.productName;
         this.customerRating = other.customerRating;
@@ -40,15 +36,6 @@ public class Product {
         this.grp_id = other.grp_id;
         this.quantitySold = other.quantitySold;
         this.upc12 = other.upc12;
-        this.suggestions = other.suggestions;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getBrandName() {
@@ -107,36 +94,12 @@ public class Product {
         this.upc12 = upc12;
     }
 
-    public String[] getSuggestions() {
-        return suggestions;
-    }
-
-    public void setSuggestions(String[] suggestions) {
-        this.suggestions = suggestions;
-    }
-
     public double getScore() {
         return score;
     }
 
     public void setScore(double score) {
         this.score = score;
-    }
-
-    @Override
-    public String toString() {                                                                                          //TODO: weg
-        return "Product{" +
-                "id='" + id + '\'' +
-                ", brandName='" + brandName + '\'' +
-                ", productName='" + productName + '\'' +
-                ", customerRating=" + customerRating +
-                ", price=" + price +
-                ", grp_id='" + grp_id + '\'' +
-                ", quantitySold=" + quantitySold +
-                ", upc12='" + upc12 + '\'' +
-                ", suggestions=" + Arrays.toString(suggestions) +
-                ", score=" + score +
-                '}';
     }
 
 }

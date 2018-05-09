@@ -19,8 +19,8 @@ public class ProductHelper {
     Logger log = LoggerFactory.getLogger(ProductHelper.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<Product> searchResponseToList(SearchResponse searchResponse) {
-        SearchHit[] searchHits = searchResponse.getHits().getHits();
+    public List<Product> searchResponseToList(SearchResponse response) {
+        SearchHit[] searchHits = response.getHits().getHits();
         List<Product> resultList = new ArrayList<>();
 
         for (SearchHit hit : searchHits) {
@@ -31,8 +31,7 @@ public class ProductHelper {
                                 objectMapper.readValue(
                                         hit.getSourceAsString(),
                                         Product.class),
-                                hit.getScore(),
-                                hit.getId()
+                                hit.getScore()
                         )
                 );
             } catch (IOException e) {
@@ -40,6 +39,11 @@ public class ProductHelper {
             }
         }
         return resultList;
+    }
+
+    public String searchResponseTo_Id(SearchResponse response){                                                         //TODO: NPE bij afwezige entry
+        SearchHit[] searchHits = response.getHits().getHits();
+        return searchHits[0].getId();
     }
 
     public String productToJson(Product product) {
@@ -56,12 +60,12 @@ public class ProductHelper {
         return jsonString;
     }
 
-    public Product getResponseToProduct(GetResponse getResponse){
+    public Product getResponseToProduct(GetResponse response){
         Product product = null;
 
-        if(getResponse.isExists()){
+        if(response.isExists()){
             try {
-                product = new Product(objectMapper.readValue(getResponse.getSourceAsString(), Product.class));
+                product = new Product(objectMapper.readValue(response.getSourceAsString(), Product.class));
             } catch (IOException e) {
                 e.printStackTrace();
             }

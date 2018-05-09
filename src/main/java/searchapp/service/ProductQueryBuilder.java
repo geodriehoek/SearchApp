@@ -148,6 +148,22 @@ public class ProductQueryBuilder {
         return searchRequest.source(searchSourceBuilder);
     }
 
+    public SearchRequest buildSearchByGrpId(String grpId){
+
+        SearchRequest searchRequest = new SearchRequest("products");
+        searchRequest.types("product");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        searchSourceBuilder.query(
+                QueryBuilders.matchQuery(
+                        "grp_id",
+                        grpId
+                )
+        );
+
+        return searchRequest.source(searchSourceBuilder);
+    }
+
     public SearchRequest buildMatchAllQuery(){
         SearchRequest searchRequest = new SearchRequest("products");
         searchRequest.types("product");

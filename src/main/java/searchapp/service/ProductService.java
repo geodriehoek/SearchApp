@@ -66,37 +66,24 @@ public class ProductService {
         );
     }
 
-    public void deleteById(String id){
-        repo.delete(id);
-    }
-
-    public void deleteByUpc12(String upc12){
-        repo.delete(
-                getIdByUpc12(upc12)
+    public void add(Product newProduct) {
+        repo.index(
+                helper.productToJson(newProduct)
         );
     }
 
-//    public Product searchByUpc12(String upc12){
-//        return getOneById(
-//                    getIdByUpc12(upc12)
-//            );
-//    }
+    public Product getOneById(String id){
+        return helper.getResponseToProduct(
+                repo.getById(
+                        id
+                )
+        );
+    }
 
-    public String getIdByUpc12(String upc12){                                                                           //enkel hier correct aangezien upc12 uniek is
-        return helper.searchResponseToList(
-                    repo.search(
-                        productQueryBuilder.buildSearchByUpc12(
-                                upc12
-                        )
-                    )
-                ).get(0)
-                 .getId();
-    }                                                                       // TODO: NPE indien upc12 (nog) niet geregistreerd
-
-    public Product getOneByUpc12(String upc12){
+    public Product getOneByGrpId(String grpId){
         return getOneById(
-                getIdByUpc12(
-                        upc12
+                getIdByGrpId(
+                        grpId
                 )
         );
     }
@@ -108,18 +95,30 @@ public class ProductService {
         );
     }
 
-    public void updateByUpc12(String upc12, Product newProductData){
+    public void updateByGrpId(String grpId, Product newProductData){
         updateById(
-                getIdByUpc12(upc12),
+                getIdByGrpId(grpId),
                 newProductData
         );
     }
 
-    public Product getOneById(String id){
-        return helper.getResponseToProduct(
-                    repo.getById(
-                            id
-                    )
+    public void deleteById(String id){
+        repo.delete(id);
+    }
+
+    public void deleteByGrpId(String grpId){
+        deleteById(
+                getIdByGrpId(grpId)
+        );
+    }
+
+    public String getIdByGrpId(String grpId){
+        return helper.searchResponseTo_Id(
+                repo.search(
+                        productQueryBuilder.buildSearchByGrpId(
+                                grpId
+                        )
+                )
         );
     }
 
@@ -131,9 +130,42 @@ public class ProductService {
         );
     }
 
-    public void add(Product newProduct) {
-        repo.index(
-                helper.productToJson(newProduct)
-        );
-    }
+
+//    public void deleteByUpc12(String upc12){
+//        repo.delete(
+//                getIdByUpc12(upc12)
+//        );
+//    }
+//
+//    public Product searchByUpc12(String upc12){
+//        return getOneById(
+//                    getIdByUpc12(upc12)
+//            );
+//    }
+//
+//    public String getIdByUpc12(String upc12){                                                                           //enkel hier correct aangezien upc12 uniek is
+//        return helper.searchResponseToList(
+//                    repo.search(
+//                        productQueryBuilder.buildSearchByUpc12(
+//                                upc12
+//                        )
+//                    )
+//                ).get(0)
+//                 .getId();
+//    }                                                                       // TODO: NPE indien upc12 (nog) niet geregistreerd
+//
+//    public Product getOneByUpc12(String upc12){
+//        return getOneById(
+//                getIdByUpc12(
+//                        upc12
+//                )
+//        );
+//    }
+//
+//    public void updateByUpc12(String upc12, Product newProductData){
+//        updateById(
+//                getIdByUpc12(upc12),
+//                newProductData
+//        );
+//    }
 }

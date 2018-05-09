@@ -47,19 +47,19 @@ public class ProductRestController {
                 );
     }
 
-    @GetMapping(path = "{upc12}",
+    @GetMapping(path = "{grpId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Product getProductByUpc12(@PathVariable("upc12") String upc12){
-        return service.getOneByUpc12(upc12);
+    public Product getProductByUpc12(@PathVariable("grpId") String grpId){
+        return service.getOneByGrpId(grpId);
     }
 
-    @PutMapping(path = "{upc12}",                                                                                          //TODO: put voor create want idempotent?
+    @PutMapping(path = "{grpId}",                                                                                          //TODO: put voor create want idempotent?
 //    @PostMapping(path = "{upc12}",
                 produces = MediaType.APPLICATION_JSON_VALUE,
                 consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Product updateProduct(@RequestBody Product product, @PathVariable("upc12") String upc12){
-        Product updatedProduct = new Product(product);
-        service.updateByUpc12(upc12, product);
+    public Product updateProduct(@RequestBody Product product, @PathVariable("grpId") String grpId){
+        Product updatedProduct = new Product(product);                                                                  //TODO: lomp
+        service.updateByGrpId(grpId, updatedProduct);
         return updatedProduct;
     }
 
@@ -75,7 +75,7 @@ public class ProductRestController {
             e.printStackTrace();
         }
 
-        Product addedProduct = new Product(service.getOneByUpc12(newProduct.getUpc12()));
+        Product addedProduct = new Product(service.getOneByGrpId(newProduct.getGrp_id()));
         HttpHeaders headers = new HttpHeaders();
         headers.add(
                 "Location",
@@ -84,16 +84,16 @@ public class ProductRestController {
         return new ResponseEntity<Product>(addedProduct, headers, HttpStatus.CREATED);
     }
 
-    @PatchMapping(path = "{upc12}",                                                                                        //TODO: voor enkel fields up te daten
-                    consumes = MediaType.APPLICATION_JSON_VALUE,
-                    produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Product> partialUpdateProduct(@RequestBody Product product, @PathVariable("upc12") String upc12){     //TODO: wat met @rRequestBody: input is 1 of meerdere json-field i.p.v. volledig Product
-        return null;
-    }
+//    @PatchMapping(path = "{grpId}",                                                                                        //TODO: voor enkel fields up te daten
+//                    consumes = MediaType.APPLICATION_JSON_VALUE,
+//                    produces = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Product> partialUpdateProduct(@RequestBody Product product, @PathVariable("grpId") String grpId){     //TODO: wat met @rRequestBody: input is 1 of meerdere json-field i.p.v. volledig Product
+//        return null;
+//    }
 
-    @DeleteMapping(path = "{upc12}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteProduct(@PathVariable("upc12") String upc12){
-        service.deleteByUpc12(upc12);
+    @DeleteMapping(path = "{grpId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> deleteProduct(@PathVariable("grpId") String grpId){
+        service.deleteByGrpId(grpId);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
 }
