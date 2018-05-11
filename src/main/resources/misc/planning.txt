@@ -2,29 +2,49 @@ algemene topics/vragen:
     - heeft philippe voorkeur tussen:
         - extra logica om scheiding tussen getOne en getList te maken   <->    alles returned List, getOne is List.get(0)
     - algemene return-info overkoepelt alle repo-methoden?
+        Momenteel: repo returnt Response OF void
+            - service krijgt response, zet om naar usable data dmv helperKlasse
+                -> repo catcht client.exceptions | helper catcht Jackson.exceptions
+                    -> beter om service te laten catchen?? via aspect?
     - veel kleine object-klassen gemaakt: pagination: 2; searchform: 3
         -> goede oplossing?
             -> geneste klassen beter?
-                - paginationDirection subklasse van paginationObject
-                - ratingOptions, sortOptions subklasse van searchForm
+                - paginationDirection nested Class van paginationObject
+                - ratingOptions, sortOptions nested Class van searchForm
+                - PaginationDirection, nested Class van PaginationObject
+
+    - validatie/security
+        -> moet ik mij daarmee bezig houden?
 
 
 GEDAAN:
-    - index/delete/update
+    - CRUD-afwerking
+        - enkel PATCH (als single-field-updates) nog niet
     - REST api/swagger
     - refresh van resultList na details/delete.
         -> instance var van Controller nl. searchForm
+        -> session attribute maken?? andere optie?
     - pagination
         -> search/from
         -> href -> getDIRECTIONPage() -> wijziging PaginationObject.direction -> redirect: resultList
+    FIX/OPTIMALISATIE:
+    ------------------
+        - verwijderen Product.id -> alles via grp_id: business-id == _id
+            -> VRAAG PHILLIPE:
+                - in reële gevallen, gebruikmaken van db-id? of business-id? => verschil tussen GET en SEARCH
+                - na verwijderen van Product.id en voor herindexeren dataset:
+                    => ObjectMapper exceptions omtrent fields niet aanwezig
+                        -> waarom? waarom niet negeren?
+
 
 TODO:   - index from file?
         - exceptioncatching en logging optimaliseren -> aspects?
             -> productRepository
             -> productHelper
-        - suggesters
-        - ajax facets
-        - search From/Size impl
+        - suggesters (mapping van products-dataset ondersteunt dit nog niet)
+            => mappings
+        - ajax facets/suggestion
+        (- search From/Size impl)
               => momenteel nog compleet onafhankelijk van limiet van results/ waar checken?
                    -> "A field with one unique value per document should be used as the tiebreaker of the sort specification.
                        Otherwise the sort order for documents that have the same sort values would be undefined.
@@ -49,10 +69,20 @@ kleine vragen philippe
 VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
 --------------------------------------
     - exception handling
+        -> waar? welke info? welke info is het belangrijkst
+        -> o.a.: philippe liet eens vallen dat hij nooit aspects heeft gebruikt. waarom niet? mij leek aspects ideaal om structureel en consequent te catchen
     - testing
         -> beiden vnl theoretisch/conceptueel interessant aangezien praktischeid relatief simpel is??
     - git??
-    - validatie
+        -> gewoontes/voorkeuren binnen formica?
+    - validatie/security
+        -> moet ik mij daarmee bezig houden?
+        -> niveau? zelf schrijven <-> impl
     - logging
         -> waar, welke info?
         -> dev vs. prod
+    - returnen van data bestaande uit meerdere dataTypes?
+        -> Klasse maken enige optie?
+        -> tuples?
+    - nut van stand-alone appilcations in huidige tijd?
+        -> gezien ik de toepassing hiervan mogelijk heb overschat in mijn zelfstudie ivm web-applications
