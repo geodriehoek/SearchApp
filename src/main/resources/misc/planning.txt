@@ -34,7 +34,8 @@ GEDAAN:
                 - in reële gevallen, gebruikmaken van db-id? of business-id? => verschil tussen GET en SEARCH
                 - na verwijderen van Product.id en voor herindexeren dataset:
                     => ObjectMapper exceptions omtrent fields niet aanwezig
-                        -> waarom? waarom niet negeren?
+                        -> waarom? geen probleem wanneer ik in Klasse extra velden toevoegde die niet in db staan
+                                   wel als er in db meer velden staan dan in Klasse
 
 
 TODO:   - index from file?
