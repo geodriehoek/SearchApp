@@ -17,11 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import searchapp.domain.Product;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository
 public class ProductRepository {
@@ -31,9 +28,9 @@ public class ProductRepository {
 
     public SearchResponse search(SearchRequest searchRequest){
         SearchResponse response = null;
-        List<Product> resultList = new ArrayList<>();
 
         try{
+//            client.close();                                                                                           //force IOException for testing @Aspect
             response = client.search(searchRequest);
         } catch (IOException e){
             log.error("-------------------------------");
@@ -41,9 +38,13 @@ public class ProductRepository {
             log.error("-------------------------------");
             e.printStackTrace();
         }
-
         return response;
     }
+
+//    public SearchResponse search(SearchRequest searchRequest) throws IOException {
+////        client.close();                                                                                                   //force IOException for testing @Aspect
+//        return client.search(searchRequest);
+//    }
 
     public GetResponse getById(String id){
         GetResponse getResponse = null;

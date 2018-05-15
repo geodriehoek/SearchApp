@@ -114,7 +114,7 @@ public class ProductController {
         return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
-    @GetMapping(path = PRODUCTS_ROOT_URL + "/delete")
+    @GetMapping(path = PRODUCTS_ROOT_URL + "delete")
     public String delete(@RequestParam String grpId){                                           //TODO: searchForm meekrijgen na post zodat lijst opnieuw kan getoond worden na deleteById
         service.deleteByGrpId(grpId);
         Thread thread = new Thread();
@@ -126,14 +126,14 @@ public class ProductController {
         return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
-    @GetMapping(path = PRODUCTS_ROOT_URL + "/new")
+    @GetMapping(path = PRODUCTS_ROOT_URL + "new")
     public String getAddForm(Map<String, Object> model){
         model.put("newProductForm", new Product());
         model.put("ratingOptions", CustomerRatingOptions.values());
         return "new-product";
     }
 
-    @PostMapping(path = PRODUCTS_ROOT_URL + "/new")
+    @PostMapping(path = PRODUCTS_ROOT_URL + "new")
     public String postAddForm(@ModelAttribute("newProductForm") Product newProduct){                                 //TODO: validation => Empty form indexed new product, slechte redirect
         service.add(newProduct);
 
@@ -147,4 +147,10 @@ public class ProductController {
 //        log.debug(url);
         return "redirect:" + mvc.url("PC#details").build() + newProduct.getGrp_id();                        //TODO: "back to results" van details na newProduct crasht
     }
+
+//    @GetMapping(path = PRODUCTS_ROOT_URL + "error")
+//    public String handleError(){
+//
+//        return "error";
+//    }
 }

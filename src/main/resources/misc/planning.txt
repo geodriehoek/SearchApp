@@ -38,10 +38,10 @@ GEDAAN:
                                    wel als er in db meer velden staan dan in Klasse
 
 
-TODO:   - index from file?
-        - exceptioncatching en logging optimaliseren -> aspects?
+TODO:   - exceptioncatching en logging optimaliseren -> aspects?
             -> productRepository
             -> productHelper
+        - index from file?
         - suggesters (mapping van products-dataset ondersteunt dit nog niet)
             => mappings
         - ajax facets/suggestion
