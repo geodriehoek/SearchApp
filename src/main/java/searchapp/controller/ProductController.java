@@ -3,11 +3,15 @@ package searchapp.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.thymeleaf.spring5.expression.Mvc;
 import searchapp.domain.Product;
 import searchapp.domain.web.CustomerRatingOptions;
+import searchapp.domain.web.ErrorMessage;
 import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
 import searchapp.service.PaginationDirection;
@@ -28,8 +32,6 @@ public class ProductController {
     private Mvc mvc;
     private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
     private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode
-    @Autowired
-    private ProductHelper helper;
 
     @ModelAttribute("searchForm")
     public SearchForm initializeSearchForm(){
