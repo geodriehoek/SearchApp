@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import searchapp.domain.Product;
+import searchapp.domain.customExceptions.NoResultListException;
+import searchapp.domain.customExceptions.ObjectMapperException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ public class ProductHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductHelper.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<Product> searchResponseToList(SearchResponse response) {
+    public List<Product> searchResponseToList(SearchResponse response){
         SearchHit[] searchHits = response.getHits().getHits();
         List<Product> resultList = new ArrayList<>();
 
@@ -41,9 +43,35 @@ public class ProductHelper {
         return resultList;
     }
 
-    public String searchResponseTo_Id(SearchResponse response){                                                         //TODO: NPE bij afwezige entry
+    public List<Product> searchResponseToListThrows(SearchResponse response) throws ObjectMapperException {
         SearchHit[] searchHits = response.getHits().getHits();
-        return searchHits[0].getId();
+        List<Product> resultList = new ArrayList<>();
+
+        for (SearchHit hit : searchHits) {
+//            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                resultList.add(
+                        new Product(
+                                objectMapper.readValue(
+                                        hit.getSourceAsString(),
+                                        Product.class),
+                                hit.getScore()
+                        )
+                );
+            } catch (IOException e) {
+                throw new ObjectMapperException("failed mapping to Object: ", e);
+            }
+        }
+        return resultList;
+    }
+
+    public String searchResponseToId(SearchResponse response){                                                          //TODO: potentiële NPE/betere oplossing?
+        SearchHit[] searchHits = response.getHits().getHits();
+        String id = null;
+        if (searchHits.length != 0){
+            id = searchHits[0].getId();
+        }
+        return id;
     }
 
     public String productToJson(Product product) {

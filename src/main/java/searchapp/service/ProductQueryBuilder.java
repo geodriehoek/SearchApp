@@ -6,6 +6,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.stereotype.Service;
+import searchapp.domain.customExceptions.NullSearchException;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.SearchSortOption;
 
@@ -87,6 +88,59 @@ public class ProductQueryBuilder {
                                                             SearchSortOption sortOption,
                                                             int from,
                                                             int size){
+        SearchRequest request = new SearchRequest("products");
+        request.types("product");
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        searchSourceBuilder.query(
+                QueryBuilders
+                        .boolQuery()
+                        //QUERY'S
+                        .should(
+                                QueryBuilders.matchPhraseQuery("productName", stringToSearch)
+                                        .slop(2)
+                        )
+                        .should(
+                                QueryBuilders.multiMatchQuery(stringToSearch)
+                                        .fields(textFieldsListWithWeights)
+                                        .fuzziness(1)                                           //fuzzi zou niet mogen bij cijfers/minder waarde
+                        )
+                        //voor search in grp_id
+                        .should(
+                                QueryBuilders.prefixQuery(
+                                        "upc12",
+                                        stringToSearch
+                                )
+                                        .boost(20)                                              //zoniet is fuzzi-match in grp_id sterker
+                        )
+                        .minimumShouldMatch(1)
+                        //FILTERS
+                        .must(
+                                QueryBuilders.rangeQuery("customerRating")
+                                        .gte(ratingFilter.getValue())
+                        )
+                        .must(
+                                QueryBuilders.rangeQuery("quantitySold")
+                                        .gte(minQuantitySold)
+                        )
+        )
+                .from(from)
+                .size(size)
+                .sort(sortOption.getValue(), SortOrder.DESC)
+        ;
+
+        return request.source(searchSourceBuilder);
+    }
+
+    public SearchRequest buildMultiFieldQueryWithPaginationThrows(String stringToSearch,
+                                                            CustomerRatingOptions ratingFilter,
+                                                            long minQuantitySold,
+                                                            SearchSortOption sortOption,
+                                                            int from,
+                                                            int size) throws NullSearchException {
+        if (stringToSearch==null || stringToSearch.equals("")){
+            throw new NullSearchException("search cannot be null");
+        }
 
         SearchRequest request = new SearchRequest("products");
         request.types("product");

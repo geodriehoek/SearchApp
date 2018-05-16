@@ -18,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import searchapp.domain.customExceptions.RepositoryException;
-import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.Product;
 
 import java.io.IOException;

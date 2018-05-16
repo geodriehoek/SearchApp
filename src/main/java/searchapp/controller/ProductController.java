@@ -6,8 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.spring5.expression.Mvc;
-import searchapp.domain.customExceptions.SearchAppException;
+import searchapp.domain.customExceptions.NullSearchException;
+import searchapp.domain.customExceptions.RepositoryException;
+import searchapp.domain.customExceptions.ObjectMapperException;
 import searchapp.domain.Product;
+import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
@@ -49,6 +52,8 @@ public class ProductController {
     public String postSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         LOGGER.debug(searchForm.toString());
         List<Product> resultList = null;
+        String returnUrl = null;
+
         try {
             resultList = service.searchWithPaginationThrows(
                                                 searchForm.getInput(),
@@ -57,17 +62,28 @@ public class ProductController {
                                                 searchForm.getSortOption(),
                                                 paginationObject
                                         );
-        } catch (SearchAppException dbe) {
+            returnUrl = "search-result";
+        } catch (RepositoryException dbe) {
             LOGGER.error("failed to search: ", dbe);
-            return "redirect:" + mvc.url("PC#getSearchForm").build();
+//            urlReturn = "redirect:" + mvc.url("PC#getSearchForm").build();
+            returnUrl = "error";
+        } catch (NullSearchException nse) {
+            LOGGER.warn(nse.getMessage());
+            returnUrl = "redirect:" + mvc.url("PC#getSearchForm").build();                                 //TODO: + melding in thymeleaf
+        } catch (ObjectMapperException sae) {
+            LOGGER.error("failed to map: ", sae);
+            returnUrl = "error";
+        } catch (SearchAppException e) {
+            e.printStackTrace();
         }
+
         model.put("resultList", resultList);
         model.put("searchForm", searchForm);
         model.put("paginationObject", paginationObject);
         LOGGER.info("pagination: " + paginationObject);
         this.searchForm = searchForm;
         model.put("numberOfResults", resultList.size());
-        return "search-result";
+        return returnUrl;
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "searchResult")

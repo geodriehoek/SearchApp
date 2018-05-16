@@ -4,8 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import searchapp.domain.customExceptions.SearchAppException;
+import searchapp.domain.customExceptions.ObjectMapperException;
 import searchapp.domain.Product;
+import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
@@ -34,9 +35,6 @@ public class ProductService {
 
     public List<Product> search(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption){
         LOGGER.info("searching: " + stringToSearch);
-//        if (stringToSearch == null || stringToSearch.equals("") || stringToSearch.equals(" ")){                       //TODO: mogelijkheid om lege query op te vangen?
-//            return matchAll();
-//        }
         return helper.searchResponseToList(
                     repo.search(
                             productQueryBuilder.buildMultiFieldQuery(stringToSearch, ratingFilter, minQuantitySold, sortOption)
@@ -72,9 +70,9 @@ public class ProductService {
                                                     long minQuantitySold,
                                                     SearchSortOption sortOption,
                                                     PaginationObject paginationObject) throws SearchAppException {
-        return helper.searchResponseToList(
+        return helper.searchResponseToListThrows(
                     repo.searchThrows(
-                            productQueryBuilder.buildMultiFieldQueryWithPagination(
+                            productQueryBuilder.buildMultiFieldQueryWithPaginationThrows(
                                     stringToSearch,
                                     ratingFilter,
                                     minQuantitySold,
@@ -133,7 +131,7 @@ public class ProductService {
     }
 
     public String getIdByGrpId(String grpId){
-        return helper.searchResponseTo_Id(
+        return helper.searchResponseToId(
                 repo.search(
                         productQueryBuilder.buildSearchByGrpId(
                                 grpId

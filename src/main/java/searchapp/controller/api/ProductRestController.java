@@ -49,7 +49,7 @@ public class ProductRestController {
 
     @GetMapping(path = "{grpId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public Product getProductByUpc12(@PathVariable("grpId") String grpId){
+    public Product getProductByUpc12(@PathVariable("grpId") String grpId){                                              //TODO: wordt potentieel nog misgeinterpreteerd?
         return service.getOneByGrpId(grpId);
     }
 
