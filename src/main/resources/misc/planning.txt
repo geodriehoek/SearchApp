@@ -42,6 +42,7 @@ TODO:   - index from file?
         - exceptioncatching en logging optimaliseren -> aspects?
             -> productRepository
             -> productHelper
+        - view-layer-checks met thymeleaf -> nullSearch verhelpen
         - suggesters (mapping van products-dataset ondersteunt dit nog niet)
             => mappings
         - ajax facets/suggestion
