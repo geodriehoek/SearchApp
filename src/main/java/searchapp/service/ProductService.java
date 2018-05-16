@@ -10,6 +10,7 @@ import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
 import searchapp.repository.ProductRepository;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -54,6 +55,25 @@ public class ProductService {
     public List<Product> searchWithPagination(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption, PaginationObject paginationObject){
         return helper.searchResponseToList(
                     repo.search(
+                            productQueryBuilder.buildMultiFieldQueryWithPagination(
+                                    stringToSearch,
+                                    ratingFilter,
+                                    minQuantitySold,
+                                    sortOption,
+                                    paginationObject.getFrom(),
+                                    paginationObject.getSize()
+                            )
+                    )
+        );
+    }
+
+    public List<Product> searchWithPaginationThrows(String stringToSearch,
+                                                    CustomerRatingOptions ratingFilter,
+                                                    long minQuantitySold,
+                                                    SearchSortOption sortOption,
+                                                    PaginationObject paginationObject) throws Exception {
+        return helper.searchResponseToList(
+                    repo.searchThrows(
                             productQueryBuilder.buildMultiFieldQueryWithPagination(
                                     stringToSearch,
                                     ratingFilter,

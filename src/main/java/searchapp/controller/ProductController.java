@@ -20,8 +20,8 @@ import java.util.Map;
 
 @Controller
 public class ProductController {
-    private final static String PRODUCTS_ROOT_URL = "/products/";
-    private Logger log = LoggerFactory.getLogger(ProductController.class);
+    private static final String PRODUCTS_ROOT_URL = "/products/";
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
     @Autowired
     private ProductService service;
     @Autowired
@@ -46,18 +46,25 @@ public class ProductController {
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "search")
     public String postSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
-        log.debug(searchForm.toString());
-        List<Product> resultList = service.searchWithPagination(
-                                            searchForm.getInput(),
-                                            searchForm.getRating(),
-                                            searchForm.getMinQuantitySold(),
-                                            searchForm.getSortOption(),
-                                            paginationObject
-                                    );
+        LOGGER.debug(searchForm.toString());
+        List<Product> resultList = null;
+        try {
+            resultList = service.searchWithPaginationThrows(
+                                                searchForm.getInput(),
+                                                searchForm.getRating(),
+                                                searchForm.getMinQuantitySold(),
+                                                searchForm.getSortOption(),
+                                                paginationObject
+                                        );
+        } catch (Exception e) {
+            LOGGER.error("fail", e);
+//            LOGGER.error(e.getMessage());
+            return "redirect:" + mvc.url("PC#getSearchForm").build();
+        }
         model.put("resultList", resultList);
         model.put("searchForm", searchForm);
         model.put("paginationObject", paginationObject);
-        log.info("pagination: " + paginationObject);
+        LOGGER.info("pagination: " + paginationObject);
         this.searchForm = searchForm;
         model.put("numberOfResults", resultList.size());
         return "search-result";
@@ -65,7 +72,7 @@ public class ProductController {
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "searchResult")
     public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
-        log.info("pagination: " + paginationObject);
+        LOGGER.info("pagination: " + paginationObject);
 
         List<Product> resultList = service.searchWithPagination(
                                             searchForm.getInput(),
@@ -144,7 +151,7 @@ public class ProductController {
             e.printStackTrace();
         }
 //        String url = "redirect:" + mvc.url("PC#details").build() + newProduct.getUpc12();
-//        log.debug(url);
+//        LOGGER.debug(url);
         return "redirect:" + mvc.url("PC#details").build() + newProduct.getGrp_id();                        //TODO: "back to results" van details na newProduct crasht
     }
 }

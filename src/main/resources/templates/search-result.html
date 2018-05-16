@@ -51,6 +51,7 @@
     </table>
     <div class="form-group">
         <div class="row">
+            <!--TODO: add th:if voor previous page-->
             <a th:href="${#mvc.url('PC#getPrevPage').build()}" class="btn btn-sm btn-light"> --Previous Page-- </a>
             <a th:href="${#mvc.url('PC#getNextPage').build()}" class="btn btn-sm btn-light"> --Next Page-- </a>
         </div>

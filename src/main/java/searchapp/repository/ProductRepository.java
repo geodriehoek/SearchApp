@@ -38,11 +38,17 @@ public class ProductRepository {
         } catch (IOException e){
             log.error("-------------------------------");
             log.error("------@ProductRepo.search------");
+            log.error(e.getMessage());
             log.error("-------------------------------");
-            e.printStackTrace();
+
         }
 
         return response;
+    }
+
+    public SearchResponse searchThrows(SearchRequest searchRequest) throws Exception {
+        client.close();
+        return client.search(searchRequest);
     }
 
     public GetResponse getById(String id){

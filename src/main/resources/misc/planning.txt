@@ -38,10 +38,10 @@ GEDAAN:
                                    wel als er in db meer velden staan dan in Klasse
 
 
-TODO:   - index from file?
-        - exceptioncatching en logging optimaliseren -> aspects?
-            -> productRepository
-            -> productHelper
+TODO:   - exceptioncatching en logging optimaliseren -> aspects?
+                    -> productRepository
+                    -> productHelper
+        - index from file?
         - suggesters (mapping van products-dataset ondersteunt dit nog niet)
             => mappings
         - ajax facets/suggestion
@@ -64,6 +64,8 @@ kleine vragen philippe
     - Thread.sleep() om NPE te vermijden
         -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt
             -> mogelijkheid: asynchrone melding van save, waarna redirect?
+    - client.close() forceren in ProductRepo
+        -> stel realistisch scenario => hoe mee omgaan?
 
 
 
