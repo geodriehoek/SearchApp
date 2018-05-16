@@ -24,7 +24,7 @@ public class ProductRestController {
     private ProductService service;
     @Autowired
     private Mvc mvc;
-    private Logger log = LoggerFactory.getLogger(ProductRestController.class);
+//    private Logger log = LoggerFactory.getLogger(ProductRestController.class);
 
     @GetMapping(path = "simpleSearch/{stringToSearch}",
                 produces = MediaType.APPLICATION_JSON_VALUE)

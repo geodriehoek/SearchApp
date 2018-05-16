@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import searchapp.domain.customExceptions.RepositoryException;
+import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.Product;
 
 import java.io.IOException;
@@ -25,7 +27,7 @@ import java.util.List;
 
 @Repository
 public class ProductRepository {
-    private Logger log = LoggerFactory.getLogger(ProductRepository.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductRepository.class);
     @Autowired
     private RestHighLevelClient client;
 
@@ -36,19 +38,24 @@ public class ProductRepository {
         try{
             response = client.search(searchRequest);
         } catch (IOException e){
-            log.error("-------------------------------");
-            log.error("------@ProductRepo.search------");
-            log.error(e.getMessage());
-            log.error("-------------------------------");
+            LOGGER.error("-------------------------------");
+            LOGGER.error("------@ProductRepo.search------");
+            LOGGER.error(e.getMessage());
+            LOGGER.error("-------------------------------");
 
         }
 
         return response;
     }
 
-    public SearchResponse searchThrows(SearchRequest searchRequest) throws Exception {
-        client.close();
-        return client.search(searchRequest);
+    public SearchResponse searchThrows(SearchRequest searchRequest) throws RepositoryException {
+        try {
+//            client.close();                                                                                             //force Exception, geeft IllegalState extends Runtime
+            return client.search(searchRequest);
+//        }catch(IOException|IllegalStateException ioe){
+        }catch(IOException ioe){
+            throw new RepositoryException("unable to access database", ioe);
+        }
     }
 
     public GetResponse getById(String id){
@@ -87,17 +94,17 @@ public class ProductRepository {
         }
 
         if (response.getResult() == DocWriteResponse.Result.UPDATED){
-            log.info("------------------");
-            log.info("-------@Repo------");
-            log.info("-PRODUCT UPDATED--");
-            log.info(response.getId());
-            log.info("------------------");
+            LOGGER.info("------------------");
+            LOGGER.info("-------@Repo------");
+            LOGGER.info("-PRODUCT UPDATED--");
+            LOGGER.info(response.getId());
+            LOGGER.info("------------------");
         }else{
-            log.warn("------------------");
-            log.warn("-------@Repo------");
-            log.warn("PRODUCT NOT UPDATED");
-            log.warn(response.getId());
-            log.warn("------------------");
+            LOGGER.warn("------------------");
+            LOGGER.warn("-------@Repo------");
+            LOGGER.warn("PRODUCT NOT UPDATED");
+            LOGGER.warn(response.getId());
+            LOGGER.warn("------------------");
         }
 
     }
@@ -117,18 +124,18 @@ public class ProductRepository {
         System.out.println(response.status().getStatus());
 
         if (response.getResult() == DocWriteResponse.Result.DELETED){
-            log.info("------------------");
-            log.info("-------@Repo------");
-            log.info("-PRODUCT DELETED--");
-            log.info(response.getId());
-            log.info("------------------");
+            LOGGER.info("------------------");
+            LOGGER.info("-------@Repo------");
+            LOGGER.info("-PRODUCT DELETED--");
+            LOGGER.info(response.getId());
+            LOGGER.info("------------------");
         }else{
 
-            log.warn("------------------");
-            log.warn("-------@Repo------");
-            log.warn("PRODUCT NOT DELETED");
-            log.warn(response.getId());
-            log.warn("------------------");
+            LOGGER.warn("------------------");
+            LOGGER.warn("-------@Repo------");
+            LOGGER.warn("PRODUCT NOT DELETED");
+            LOGGER.warn(response.getId());
+            LOGGER.warn("------------------");
         }
     }
 
@@ -149,18 +156,18 @@ public class ProductRepository {
         System.out.println(response.status().getStatus());
 
         if (response.getResult() == DocWriteResponse.Result.CREATED){
-            log.info("------------------");
-            log.info("-------@Repo------");
-            log.info("-PRODUCT CREATED--");
-            log.info(response.getId());
-            log.info("------------------");
+            LOGGER.info("------------------");
+            LOGGER.info("-------@Repo------");
+            LOGGER.info("-PRODUCT CREATED--");
+            LOGGER.info(response.getId());
+            LOGGER.info("------------------");
         }else{
 
-            log.warn("-------------------");
-            log.warn("-------@Repo-------");
-            log.warn("PRODUCT NOT CREATED");
-            log.warn(response.getId());
-            log.warn("-------------------");
+            LOGGER.warn("-------------------");
+            LOGGER.warn("-------@Repo-------");
+            LOGGER.warn("PRODUCT NOT CREATED");
+            LOGGER.warn(response.getId());
+            LOGGER.warn("-------------------");
         }
     }
 

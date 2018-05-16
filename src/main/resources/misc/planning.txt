@@ -16,6 +16,9 @@ algemene topics/vragen:
     - validatie/security
         -> moet ik mij daarmee bezig houden?
 
+BEZIG:
+    - alle Exceptions in repo door throwen tot Controller, zodat deze juist kan reageren
+        -> just?
 
 GEDAAN:
     - CRUD-afwerking

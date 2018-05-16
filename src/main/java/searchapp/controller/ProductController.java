@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.spring5.expression.Mvc;
+import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.Product;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.SearchForm;
@@ -56,9 +57,8 @@ public class ProductController {
                                                 searchForm.getSortOption(),
                                                 paginationObject
                                         );
-        } catch (Exception e) {
-            LOGGER.error("fail", e);
-//            LOGGER.error(e.getMessage());
+        } catch (SearchAppException dbe) {
+            LOGGER.error("failed to search: ", dbe);
             return "redirect:" + mvc.url("PC#getSearchForm").build();
         }
         model.put("resultList", resultList);

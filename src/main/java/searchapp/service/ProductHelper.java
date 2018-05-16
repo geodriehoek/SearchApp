@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 public class ProductHelper {
-    Logger log = LoggerFactory.getLogger(ProductHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductHelper.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
     public List<Product> searchResponseToList(SearchResponse response) {
@@ -70,9 +70,9 @@ public class ProductHelper {
                 e.printStackTrace();
             }
         }else{
-            log.error("------------");
-            log.error("NO SUCH PRODUCT");
-            log.error("------------");
+            LOGGER.error("------------");
+            LOGGER.error("NO SUCH PRODUCT");
+            LOGGER.error("------------");
         }
         return product;
     }
@@ -86,7 +86,7 @@ public class ProductHelper {
 //        }else if(pagination.getDirection() == PaginationDirection.BACK){
 //            from = from - size;
 //        }else{
-//            log.error("wrong pagination direction");                                                                       //TODO: altijd hier
+//            LOGGER.error("wrong pagination direction");                                                                       //TODO: altijd hier
 //        }
 //
 //        return new PaginationObject(from, size, pagination.getDirection());
