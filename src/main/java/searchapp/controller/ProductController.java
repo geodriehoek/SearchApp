@@ -4,14 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.spring5.expression.Mvc;
-import searchapp.domain.customExceptions.NullSearchException;
 import searchapp.domain.customExceptions.RepositoryException;
 import searchapp.domain.customExceptions.ObjectMapperException;
 import searchapp.domain.Product;
 import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.web.CustomerRatingOptions;
+import searchapp.domain.web.ErrorMessage;
 import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
 import searchapp.service.PaginationDirection;
@@ -19,6 +20,7 @@ import searchapp.service.PaginationObject;
 import searchapp.service.ProductHelper;
 import searchapp.service.ProductService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +33,7 @@ public class ProductController {
     @Autowired
     private Mvc mvc;
     private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
-    private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode
+    private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode => SearchForm.PaginationObject || momenteel blijft 'from' behouden na nieuwe search
     @Autowired
     private ProductHelper helper;
 
@@ -41,18 +43,28 @@ public class ProductController {
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "search")
-    public String getSearchForm(Map<String, Object> model){
-        model.put("searchForm", new SearchForm());
+    public String getSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
+//        model.put("searchForm", new SearchForm());                                                                    //dit i.t.t. hieronder garandeert een nieuwe search
+        model.put("searchForm", searchForm);
         model.put("sortOptions", SearchSortOption.values());
         model.put("ratingOptions", CustomerRatingOptions.values());
         return "search-product";
     }
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "search")
-    public String postSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
+    public String postSearchForm(@ModelAttribute("searchForm") @Valid SearchForm searchForm, BindingResult br, Map<String, Object> model){
+        String returnUrl = null;
+        model.put("searchForm", searchForm);
+        this.searchForm = searchForm;
+        if(br.hasErrors()){
+            LOGGER.warn("search cannot be null, redirecting");
+            model.put("sortOptions", SearchSortOption.values());
+            model.put("ratingOptions", CustomerRatingOptions.values());
+            return "search-product";
+        }
+
         LOGGER.debug(searchForm.toString());
         List<Product> resultList = null;
-        String returnUrl = null;
 
         try {
             resultList = service.searchWithPaginationThrows(
@@ -62,27 +74,33 @@ public class ProductController {
                                                 searchForm.getSortOption(),
                                                 paginationObject
                                         );
+            model.put("resultList", resultList);
+//            model.put("searchForm", searchForm);
+            model.put("paginationObject", paginationObject);
+            LOGGER.info("pagination: " + paginationObject);
+            model.put("numberOfResults", resultList.size());
+
             returnUrl = "search-result";
-        } catch (RepositoryException dbe) {
-            LOGGER.error("failed to search: ", dbe);
-//            urlReturn = "redirect:" + mvc.url("PC#getSearchForm").build();
+        } catch (RepositoryException re) {
+            LOGGER.error("failed to search: ", re);
+
+            ErrorMessage errorMessage = new ErrorMessage(re.getMessage());
+            LOGGER.debug("errorMessge to display: " + errorMessage.getDescription());
+            model.put("errorMessage", errorMessage);
+
             returnUrl = "error";
-        } catch (NullSearchException nse) {
-            LOGGER.warn(nse.getMessage());
-            returnUrl = "redirect:" + mvc.url("PC#getSearchForm").build();                                 //TODO: + melding in thymeleaf OR enkel in thymeleaf checken -> SearchForm.input @notnullable
-        } catch (ObjectMapperException sae) {
-            LOGGER.error("failed to map: ", sae);
+        } catch (ObjectMapperException ome) {
+            LOGGER.error("failed to map: ", ome);
+
+            ErrorMessage errorMessage = new ErrorMessage(ome.getMessage());
+            LOGGER.debug("errorMessge to display: " + errorMessage.getDescription());
+            model.put("errorMessage", errorMessage);
+
             returnUrl = "error";
-        } catch (SearchAppException e) {
-            e.printStackTrace();
+//        } catch (SearchAppException e) {
+//            e.printStackTrace();
         }
 
-        model.put("resultList", resultList);
-        model.put("searchForm", searchForm);
-        model.put("paginationObject", paginationObject);
-        LOGGER.info("pagination: " + paginationObject);
-        this.searchForm = searchForm;
-//        model.put("numberOfResults", resultList.size());
         return returnUrl;
     }
 

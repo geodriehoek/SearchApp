@@ -26,7 +26,6 @@ public class ProductHelper {
         List<Product> resultList = new ArrayList<>();
 
         for (SearchHit hit : searchHits) {
-//            ObjectMapper objectMapper = new ObjectMapper();
             try {
                 resultList.add(
                         new Product(
@@ -48,7 +47,6 @@ public class ProductHelper {
         List<Product> resultList = new ArrayList<>();
 
         for (SearchHit hit : searchHits) {
-//            ObjectMapper objectMapper = new ObjectMapper();
             try {
                 resultList.add(
                         new Product(
@@ -58,8 +56,9 @@ public class ProductHelper {
                                 hit.getScore()
                         )
                 );
+//                throw new IOException("test: force exception");                                                         //TODO: forced exception for testing
             } catch (IOException e) {
-                throw new ObjectMapperException("failed mapping to Object: ", e);
+                throw new ObjectMapperException("failed mapping to Object", e);
             }
         }
         return resultList;
@@ -104,19 +103,4 @@ public class ProductHelper {
         }
         return product;
     }
-
-//    public PaginationObject interpretPagination(PaginationObject pagination){
-//        int from = pagination.getFrom();
-//        int size = pagination.getSize();
-//
-//        if(pagination.getDirection() == PaginationDirection.FORWARD){                                                   //TODO: error-bounds
-//            from = from + size;
-//        }else if(pagination.getDirection() == PaginationDirection.BACK){
-//            from = from - size;
-//        }else{
-//            LOGGER.error("wrong pagination direction");                                                                       //TODO: altijd hier
-//        }
-//
-//        return new PaginationObject(from, size, pagination.getDirection());
-//    }                                       //TODO: mag weg, overgezet naar klasse-methode
 }

@@ -71,9 +71,6 @@ public class ProductService {
                                                     long minQuantitySold,
                                                     SearchSortOption sortOption,
                                                     PaginationObject paginationObject) throws SearchAppException {
-        if (stringToSearch==null || stringToSearch.equals("")){
-            throw new NullSearchException("search cannot be null");
-        }
         return helper.searchResponseToListThrows(
                     repo.searchThrows(
                             productQueryBuilder.buildMultiFieldQueryWithPaginationThrows(

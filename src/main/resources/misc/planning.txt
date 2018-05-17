@@ -68,7 +68,9 @@ kleine vragen philippe
         -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt
             -> mogelijkheid: asynchrone melding van save, waarna redirect?
     - client.close() forceren in ProductRepo
-        -> stel realistisch scenario => hoe mee omgaan?
+        -> vangt sowieso IOException op
+        -> moet IllegalStateException (door .close()) dan ook opgevangen worden?
+            -> stel realistisch scenario => hoe mee omgaan?
     - ExceptionConversionAspect werkt niet
         -> methode zelf moet nog steeds throws declareren in signature, methode die oproept moet nog altijd catchen voor compiler
             -> dus aspect onmogelijk? compeelt nutteloos?

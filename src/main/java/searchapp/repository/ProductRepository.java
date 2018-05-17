@@ -49,8 +49,8 @@ public class ProductRepository {
 
     public SearchResponse searchThrows(SearchRequest searchRequest) throws RepositoryException {
         try {
-//            return client.search(searchRequest);
-            throw new IOException("test exception forced");
+            return client.search(searchRequest);
+//            throw new IOException("test: exception forced");
         }catch(IOException ioe){
             throw new RepositoryException("unable to access database", ioe);
         }
