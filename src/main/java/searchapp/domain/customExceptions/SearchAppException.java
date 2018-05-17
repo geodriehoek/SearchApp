@@ -1,6 +1,6 @@
 package searchapp.domain.customExceptions;
 
-public class SearchAppException extends Exception {
+public class SearchAppException extends RuntimeException {
     public SearchAppException(String message){
         super(message);
     }

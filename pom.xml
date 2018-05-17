@@ -36,6 +36,11 @@
     </dependency>
 
     <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
+    <dependency>
         <groupId>org.elasticsearch.client</groupId>
         <artifactId>elasticsearch-rest-high-level-client</artifactId>
         <version>6.2.2</version>
@@ -47,11 +52,11 @@
         <version>6.2.2</version>
     </dependency>
 
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-test</artifactId>
-        <scope>test</scope>
-    </dependency>
+    <!--<dependency>-->
+        <!--<groupId>org.springframework.boot</groupId>-->
+        <!--<artifactId>spring-boot-starter-test</artifactId>-->
+        <!--<scope>test</scope>-->
+    <!--</dependency>-->
 
     <dependency>
         <groupId>io.springfox</groupId>

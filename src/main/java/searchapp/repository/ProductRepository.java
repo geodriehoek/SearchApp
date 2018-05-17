@@ -49,9 +49,8 @@ public class ProductRepository {
 
     public SearchResponse searchThrows(SearchRequest searchRequest) throws RepositoryException {
         try {
-//            client.close();                                                                                             //force Exception, geeft IllegalState extends Runtime
-            return client.search(searchRequest);
-//        }catch(IOException|IllegalStateException ioe){
+//            return client.search(searchRequest);
+            throw new IOException("test exception forced");
         }catch(IOException ioe){
             throw new RepositoryException("unable to access database", ioe);
         }

@@ -138,9 +138,9 @@ public class ProductQueryBuilder {
                                                             SearchSortOption sortOption,
                                                             int from,
                                                             int size) throws NullSearchException {
-        if (stringToSearch==null || stringToSearch.equals("")){
-            throw new NullSearchException("search cannot be null");
-        }
+//        if (stringToSearch==null || stringToSearch.equals("")){                                                         //In service opgevangen
+//            throw new NullSearchException("search cannot be null");
+//        }
 
         SearchRequest request = new SearchRequest("products");
         request.types("product");

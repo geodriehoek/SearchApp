@@ -69,7 +69,9 @@ kleine vragen philippe
             -> mogelijkheid: asynchrone melding van save, waarna redirect?
     - client.close() forceren in ProductRepo
         -> stel realistisch scenario => hoe mee omgaan?
-
+    - ExceptionConversionAspect werkt niet
+        -> methode zelf moet nog steeds throws declareren in signature, methode die oproept moet nog altijd catchen voor compiler
+            -> dus aspect onmogelijk? compeelt nutteloos?
 
 
 VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
@@ -92,3 +94,12 @@ VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
         -> tuples?
     - nut van stand-alone appilcations in huidige tijd?
         -> gezien ik de toepassing hiervan mogelijk heb overschat in mijn zelfstudie ivm web-applications
+
+
+
+
+
+FIXES:
+    - Elasticsearch exception [type=cluster_block_exception, reason=blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];]
+        PUT your_index_name/_settings
+          {"index": {"blocks": {"read_only_allow_delete": "false"}}}

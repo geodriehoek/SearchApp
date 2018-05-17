@@ -69,7 +69,7 @@ public class ProductController {
             returnUrl = "error";
         } catch (NullSearchException nse) {
             LOGGER.warn(nse.getMessage());
-            returnUrl = "redirect:" + mvc.url("PC#getSearchForm").build();                                 //TODO: + melding in thymeleaf
+            returnUrl = "redirect:" + mvc.url("PC#getSearchForm").build();                                 //TODO: + melding in thymeleaf OR enkel in thymeleaf checken -> SearchForm.input @notnullable
         } catch (ObjectMapperException sae) {
             LOGGER.error("failed to map: ", sae);
             returnUrl = "error";
@@ -82,7 +82,7 @@ public class ProductController {
         model.put("paginationObject", paginationObject);
         LOGGER.info("pagination: " + paginationObject);
         this.searchForm = searchForm;
-        model.put("numberOfResults", resultList.size());
+//        model.put("numberOfResults", resultList.size());
         return returnUrl;
     }
 
