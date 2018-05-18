@@ -56,7 +56,7 @@ public class ProductController {
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "search")
     public String postSearchForm(@ModelAttribute("searchForm") @Valid SearchForm searchForm, BindingResult br, Map<String, Object> model){
-        String returnUrl = null;
+        String returnUrl;
         model.put("searchForm", searchForm);
         this.searchForm = searchForm;
         if(br.hasErrors()){
@@ -88,6 +88,7 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
 //        } catch (RepositoryException re) {
@@ -138,6 +139,7 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         }
@@ -160,7 +162,7 @@ public class ProductController {
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "details/{grpId}")
     public String details(@PathVariable("grpId") String grpId, Map<String, Object> model){
-        String returnUrl = null;                                                                                    //intellij doe raar
+        String returnUrl;
 
         try {
             model.put("updateProductForm", new Product(service.getOneByGrpId(grpId)));
@@ -200,6 +202,7 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(ome.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+//            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         } catch (SearchAppException sae){
@@ -207,6 +210,7 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+//            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         }
@@ -233,6 +237,7 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+//            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         }
@@ -266,6 +271,7 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+//            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         }
