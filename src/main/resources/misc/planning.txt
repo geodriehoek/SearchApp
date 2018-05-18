@@ -41,9 +41,16 @@ GEDAAN:
                                    wel als er in db meer velden staan dan in Klasse
 
 
-TODO:   - exceptioncatching en logging optimaliseren -> aspects?
-                    -> productRepository
-                    -> productHelper
+TODO:   - exceptioncatching en logging optimaliseren
+            -> algemene exceptions algemeen opvangen?
+                -> bvb: RepositoryException
+                    -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#simplemappingexceptionresolver
+                        of
+                    -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#using-controlleradvice-classes
+                        -> enkel statische pagina's => return "repository-error.html";
+            -> aspect voor logging? en Exception-info meesturen?
+            -> REST
+                -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#errors-and-rest
         - index from file?
         - suggesters (mapping van products-dataset ondersteunt dit nog niet)
             => mappings
