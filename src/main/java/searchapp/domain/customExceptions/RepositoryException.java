@@ -1,6 +1,6 @@
 package searchapp.domain.customExceptions;
 
-public class RepositoryException extends ObjectMapperException {
+public class RepositoryException extends SearchAppException {
     public RepositoryException(String message){
         super(message);
     }

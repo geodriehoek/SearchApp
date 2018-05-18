@@ -18,7 +18,11 @@ algemene topics/vragen:
 
 BEZIG:
     - alle Exceptions in repo door throwen tot Controller, zodat deze juist kan reageren
-        -> just?
+        -> repo wrapt specifiek -> service throwt overkoepelend -> controller kan nog steeds specifiek afhandelen
+            => wat met afhandelen van overkoepelende SearchAppException op controller niveau?
+        -> nadeel: alle methoden van repo tot service throwen -> noodzakelijk?
+    - catching in RestController
+        -> hoe/welke info overbrengen?
 
 GEDAAN:
     - CRUD-afwerking

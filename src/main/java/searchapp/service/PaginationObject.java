@@ -54,11 +54,11 @@ public class PaginationObject {
                 if(from - size >= 0){
                     from = from - size;
                 }else{
-                    LoggerFactory.getLogger(PaginationObject.class).error("search-from can't be negative");             //TODO: hier wel loggen?
+                    LoggerFactory.getLogger(PaginationObject.class).warn("search-from can't be negative");             //TODO: hier wel loggen?
                 }
                 break;
             default:                                                                                                  //TODO: nood aan default?
-                LoggerFactory.getLogger(PaginationObject.class).error("unable to interpret search-from");             //TODO: hier wel loggen?
+                LoggerFactory.getLogger(PaginationObject.class).warn("unable to interpret search-from");             //TODO: hier wel loggen?
         }
     }
 

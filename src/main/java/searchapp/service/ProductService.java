@@ -5,10 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import searchapp.domain.customExceptions.NullSearchException;
-import searchapp.domain.customExceptions.ObjectMapperException;
 import searchapp.domain.Product;
+import searchapp.domain.customExceptions.ObjectMapperException;
 import searchapp.domain.customExceptions.ProductNotFoundException;
+import searchapp.domain.customExceptions.RepositoryException;
 import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.SearchForm;
@@ -27,7 +27,7 @@ public class ProductService {
     @Autowired
     private ProductHelper helper;
 
-    public List<Product> searchFromSearchForm(SearchForm searchForm){                                                   //TODO: goe design-principe om specifieke input te routen naar algemenere methods
+    public List<Product> searchFromSearchForm(SearchForm searchForm) throws SearchAppException {                                                   //TODO: goe design-principe om specifieke input te routen naar algemenere methods
         return search(
                 searchForm.getInput(),
                 searchForm.getRating(),
@@ -36,7 +36,7 @@ public class ProductService {
         );
     }
 
-    public List<Product> search(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption){
+    public List<Product> search(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption) throws SearchAppException {
         LOGGER.info("searching: " + stringToSearch);
         return helper.searchResponseToList(
                     repo.search(
@@ -45,7 +45,7 @@ public class ProductService {
                 );
     }           //TODO: behouden voor RESTapi, of alles weg ifv ...WithPagination
 
-    public List<Product> simpleSearch(String stringToSearch){
+    public List<Product> simpleSearch(String stringToSearch) throws SearchAppException {
         return helper.searchResponseToList(
                     repo.search(
                             productQueryBuilder.buildMultiFieldQuery(stringToSearch, CustomerRatingOptions.ONE, 0, SearchSortOption.RELEVANCE)          //TODO: goe design om te hardcoden?
@@ -53,7 +53,26 @@ public class ProductService {
                 );
     }
 
-    public List<Product> searchWithPagination(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption, PaginationObject paginationObject){
+//    public List<Product> searchWithPagination(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption, PaginationObject paginationObject){
+//        return helper.searchResponseToList(
+//                    repo.search(
+//                            productQueryBuilder.buildMultiFieldQueryWithPagination(
+//                                    stringToSearch,
+//                                    ratingFilter,
+//                                    minQuantitySold,
+//                                    sortOption,
+//                                    paginationObject.getFrom(),
+//                                    paginationObject.getSize()
+//                            )
+//                    )
+//        );
+//    }
+
+    public List<Product> searchWithPagination(String stringToSearch,
+                                              CustomerRatingOptions ratingFilter,
+                                              long minQuantitySold,
+                                              SearchSortOption sortOption,
+                                              PaginationObject paginationObject) throws SearchAppException {
         return helper.searchResponseToList(
                     repo.search(
                             productQueryBuilder.buildMultiFieldQueryWithPagination(
@@ -68,32 +87,14 @@ public class ProductService {
         );
     }
 
-    public List<Product> searchWithPaginationThrows(String stringToSearch,
-                                                    CustomerRatingOptions ratingFilter,
-                                                    long minQuantitySold,
-                                                    SearchSortOption sortOption,
-                                                    PaginationObject paginationObject) throws SearchAppException {
-        return helper.searchResponseToListThrows(
-                    repo.searchThrows(
-                            productQueryBuilder.buildMultiFieldQueryWithPaginationThrows(
-                                    stringToSearch,
-                                    ratingFilter,
-                                    minQuantitySold,
-                                    sortOption,
-                                    paginationObject.getFrom(),
-                                    paginationObject.getSize()
-                            )
-                    )
-        );
-    }
-
-    public void add(Product newProduct) {
+    public void add(Product newProduct) throws SearchAppException {
         repo.index(
                 helper.productToJson(newProduct)
         );
     }
 
     public Product getOneById(String id) throws SearchAppException{
+        LOGGER.debug("getting " + id);
         try {
             return helper.getResponseToProduct(
                     repo.getById(
@@ -105,7 +106,7 @@ public class ProductService {
         }
     }
 
-    public Product getOneByGrpId(String grpId){
+    public Product getOneByGrpId(String grpId) throws SearchAppException{
         return getOneById(
                 getIdByGrpId(
                         grpId
@@ -113,31 +114,31 @@ public class ProductService {
         );
     }
 
-    public void updateById(String id, Product newProductData){
+    public void updateById(String id, Product newProductData) throws SearchAppException {
         repo.update(
                 id,
                 helper.productToJson(newProductData)
         );
     }
 
-    public void updateByGrpId(String grpId, Product newProductData){
+    public void updateByGrpId(String grpId, Product newProductData) throws SearchAppException {
         updateById(
                 getIdByGrpId(grpId),
                 newProductData
         );
     }
 
-    public void deleteById(String id){
+    public void deleteById(String id) throws RepositoryException {
         repo.delete(id);
-    }
+    }                                                  //TODO: voor consistentie ook SearchAppException throwen?
 
-    public void deleteByGrpId(String grpId){
+    public void deleteByGrpId(String grpId) throws SearchAppException {
         deleteById(
                 getIdByGrpId(grpId)
         );
     }
 
-    public String getIdByGrpId(String grpId){
+    public String getIdByGrpId(String grpId) throws SearchAppException {
         return helper.searchResponseToId(
                 repo.search(
                         productQueryBuilder.buildSearchByGrpId(
@@ -147,50 +148,11 @@ public class ProductService {
         );
     }
 
-    public List<Product> matchAll(){
+    public List<Product> matchAll() throws SearchAppException{
         return helper.searchResponseToList(
                     repo.search(
                             productQueryBuilder.buildMatchAllQuery()
                     )
         );
     }
-
-
-//    public void deleteByUpc12(String upc12){
-//        repo.delete(
-//                getIdByUpc12(upc12)
-//        );
-//    }
-//
-//    public Product searchByUpc12(String upc12){
-//        return getOneById(
-//                    getIdByUpc12(upc12)
-//            );
-//    }
-//
-//    public String getIdByUpc12(String upc12){                                                                           //enkel hier correct aangezien upc12 uniek is
-//        return helper.searchResponseToList(
-//                    repo.search(
-//                        productQueryBuilder.buildSearchByUpc12(
-//                                upc12
-//                        )
-//                    )
-//                ).get(0)
-//                 .getId();
-//    }                                                                       // TODO: NPE indien upc12 (nog) niet geregistreerd
-//
-//    public Product getOneByUpc12(String upc12){
-//        return getOneById(
-//                getIdByUpc12(
-//                        upc12
-//                )
-//        );
-//    }
-//
-//    public void updateByUpc12(String upc12, Product newProductData){
-//        updateById(
-//                getIdByUpc12(upc12),
-//                newProductData
-//        );
-//    }
 }

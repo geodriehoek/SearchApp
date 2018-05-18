@@ -1,6 +1,6 @@
 package searchapp.domain.customExceptions;
 
-public class NoResultListException extends ObjectMapperException {
+public class NoResultListException extends SearchAppException {
     public NoResultListException(String message){
         super(message);
     }

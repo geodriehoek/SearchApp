@@ -33,38 +33,23 @@ public class ProductRepository {
     @Autowired
     private RestHighLevelClient client;
 
-    public SearchResponse search(SearchRequest searchRequest){
-        SearchResponse response = null;
-        List<Product> resultList = new ArrayList<>();
-
-        try{
-            response = client.search(searchRequest);
-        } catch (IOException e){
-            LOGGER.error("-------------------------------");
-            LOGGER.error("------@ProductRepo.search------");
-            LOGGER.error(e.getMessage());
-            LOGGER.error("-------------------------------");
-
-        }
-
-        return response;
-    }
-
-    public SearchResponse searchThrows(SearchRequest searchRequest) throws RepositoryException {
+    public SearchResponse search(SearchRequest searchRequest) throws RepositoryException {
         SearchResponse response;
+
         try {
 //            response = client.search(searchRequest);
 //            throw new IOException("test: exception forced");
             return client.search(searchRequest);
         }catch(IOException ioe){
-            throw new RepositoryException("unable to access database", ioe);
+            throw new RepositoryException("unable to access database: search", ioe);
         }
 
 //        return response;
     }
 
-    public GetResponse getById(String id) throws SearchAppException{
-        GetResponse getResponse = null;
+    public GetResponse getById(String id) throws RepositoryException{
+        GetResponse getResponse;
+
         GetRequest getRequest = new GetRequest(
                 "products",
                 "product",
@@ -74,80 +59,78 @@ public class ProductRepository {
         try {
             getResponse = client.get(getRequest);
         } catch (IOException ioe) {
-            throw new RepositoryException("unable to access database", ioe);
-//        } catch (ActionRequestValidationException arve){                                                              //TODO: mag weg eens opgevangen in service
-//            throw new ProductNotFoundException("No Id(" + id + ") present", arve);
+            throw new RepositoryException("unable to access database: getOne", ioe);
         }
 
         return getResponse;
     }
 
     //TODO: update/deleteById; verschillende slaaggevallen opvangen. wat met return info?
-    public void update(String id, String jsonStringNewData){
-        UpdateResponse response = new UpdateResponse();
+    public void update(String id, String jsonStringNewData) throws RepositoryException {
+        UpdateResponse response;
 
         UpdateRequest request = new UpdateRequest(
-                "products",
-                "product",
-                id
-        );
+                                        "products",
+                                        "product",
+                                        id
+                                );
 
 //        request.upsert(jsonStringNewData, XContentType.JSON).docAsUpsert(true);
         request.doc(jsonStringNewData, XContentType.JSON);
         try {
             response = client.update(request);
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (response.getResult() == DocWriteResponse.Result.UPDATED){
+                LOGGER.info("------------------");
+                LOGGER.info("-------@Repo------");
+                LOGGER.info("-PRODUCT UPDATED--");
+                LOGGER.info(response.getId());
+                LOGGER.info("------------------");
+            }else{
+                LOGGER.warn("------------------");
+                LOGGER.warn("-------@Repo------");
+                LOGGER.warn("PRODUCT NOT UPDATED");
+                LOGGER.warn(response.getId());
+                LOGGER.warn("------------------");
+            }
+        } catch(IOException ioe){
+            throw new RepositoryException("unable to access database: update", ioe);
         }
 
-        if (response.getResult() == DocWriteResponse.Result.UPDATED){
-            LOGGER.info("------------------");
-            LOGGER.info("-------@Repo------");
-            LOGGER.info("-PRODUCT UPDATED--");
-            LOGGER.info(response.getId());
-            LOGGER.info("------------------");
-        }else{
-            LOGGER.warn("------------------");
-            LOGGER.warn("-------@Repo------");
-            LOGGER.warn("PRODUCT NOT UPDATED");
-            LOGGER.warn(response.getId());
-            LOGGER.warn("------------------");
-        }
 
-    }
+    }                            //TODO: returnvalue??
 
-    public void delete(String id){
-        DeleteResponse response = new DeleteResponse();
+    public void delete(String id) throws RepositoryException {
+        DeleteResponse response;
+
         DeleteRequest request = new DeleteRequest(
                 "products",
                 "product",
                 id
         );
+
         try {
             response = client.delete(request);
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (response.getResult() == DocWriteResponse.Result.DELETED){
+                LOGGER.info("------------------");
+                LOGGER.info("-------@Repo------");
+                LOGGER.info("-PRODUCT DELETED--");
+                LOGGER.info(response.getId());
+                LOGGER.info("------------------");
+            }else{
+                LOGGER.warn("------------------");
+                LOGGER.warn("-------@Repo------");
+                LOGGER.warn("PRODUCT NOT DELETED");
+                LOGGER.warn(response.getId());
+                LOGGER.warn("------------------");
+            }
+        } catch(IOException ioe){
+            throw new RepositoryException("unable to access database: delete", ioe);
         }
-        System.out.println(response.status().getStatus());
+    }                                                      //TODO: returnvalue??
 
-        if (response.getResult() == DocWriteResponse.Result.DELETED){
-            LOGGER.info("------------------");
-            LOGGER.info("-------@Repo------");
-            LOGGER.info("-PRODUCT DELETED--");
-            LOGGER.info(response.getId());
-            LOGGER.info("------------------");
-        }else{
+    public void index(String jsonProduct) throws RepositoryException {
+        IndexResponse response;
 
-            LOGGER.warn("------------------");
-            LOGGER.warn("-------@Repo------");
-            LOGGER.warn("PRODUCT NOT DELETED");
-            LOGGER.warn(response.getId());
-            LOGGER.warn("------------------");
-        }
-    }
-
-    public void index(String jsonProduct){
-        IndexResponse response = new IndexResponse();
         IndexRequest request = new IndexRequest(
                                             "products",
                                             "product"
@@ -156,27 +139,23 @@ public class ProductRepository {
 
         try {
             response = client.index(request);
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (response.getResult() == DocWriteResponse.Result.CREATED){
+                LOGGER.info("------------------");
+                LOGGER.info("-------@Repo------");
+                LOGGER.info("-PRODUCT CREATED--");
+                LOGGER.info(response.getId());
+                LOGGER.info("------------------");
+            }else{
+                LOGGER.warn("-------------------");
+                LOGGER.warn("-------@Repo-------");
+                LOGGER.warn("PRODUCT NOT CREATED");
+                LOGGER.warn(response.getId());
+                LOGGER.warn("-------------------");
+            }
+        } catch(IOException ioe){
+            throw new RepositoryException("unable to access database: index", ioe);
         }
-
-        System.out.println(response.status().getStatus());
-
-        if (response.getResult() == DocWriteResponse.Result.CREATED){
-            LOGGER.info("------------------");
-            LOGGER.info("-------@Repo------");
-            LOGGER.info("-PRODUCT CREATED--");
-            LOGGER.info(response.getId());
-            LOGGER.info("------------------");
-        }else{
-
-            LOGGER.warn("-------------------");
-            LOGGER.warn("-------@Repo-------");
-            LOGGER.warn("PRODUCT NOT CREATED");
-            LOGGER.warn(response.getId());
-            LOGGER.warn("-------------------");
-        }
-    }
+    }                                              //TODO: returnvalue??
 
 //    @PreDestroy
 //    public void cleanUp(){

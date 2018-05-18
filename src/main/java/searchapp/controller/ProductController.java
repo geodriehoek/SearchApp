@@ -3,7 +3,6 @@ package searchapp.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +11,7 @@ import searchapp.domain.customExceptions.ProductNotFoundException;
 import searchapp.domain.customExceptions.RepositoryException;
 import searchapp.domain.customExceptions.ObjectMapperException;
 import searchapp.domain.Product;
+import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.ErrorMessage;
 import searchapp.domain.web.SearchForm;
@@ -29,14 +29,16 @@ import java.util.Map;
 public class ProductController {
     private static final String PRODUCTS_ROOT_URL = "/products/";
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductController.class);
+
     @Autowired
     private ProductService service;
     @Autowired
     private Mvc mvc;
-    private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
-    private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode => SearchForm.PaginationObject || momenteel blijft 'from' behouden na nieuwe search
     @Autowired
     private ProductHelper helper;
+
+    private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
+    private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode => SearchForm.PaginationObject || momenteel blijft 'from' behouden na nieuwe search
 
     @ModelAttribute("searchForm")
     public SearchForm initializeSearchForm(){
@@ -54,7 +56,7 @@ public class ProductController {
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "search")
     public String postSearchForm(@ModelAttribute("searchForm") @Valid SearchForm searchForm, BindingResult br, Map<String, Object> model){
-        String returnUrl;
+        String returnUrl = null;
         model.put("searchForm", searchForm);
         this.searchForm = searchForm;
         if(br.hasErrors()){
@@ -68,38 +70,45 @@ public class ProductController {
         List<Product> resultList = null;
 
         try {
-            resultList = service.searchWithPaginationThrows(
-                                                searchForm.getInput(),
-                                                searchForm.getRating(),
-                                                searchForm.getMinQuantitySold(),
-                                                searchForm.getSortOption(),
-                                                paginationObject
-                                        );
+            resultList = service.searchWithPagination(
+                    searchForm.getInput(),
+                    searchForm.getRating(),
+                    searchForm.getMinQuantitySold(),
+                    searchForm.getSortOption(),
+                    paginationObject
+            );
             model.put("resultList", resultList);
-//            model.put("searchForm", searchForm);
             model.put("paginationObject", paginationObject);
             LOGGER.info("pagination: " + paginationObject);
             model.put("numberOfResults", resultList.size());
 
             returnUrl = "search-result";
-        } catch (RepositoryException re) {
-            LOGGER.error("failed to search: ", re);
+        } catch (SearchAppException sae){                                                                               //TODO: philippe: gezien context is dit beter, waarschijnlijk algemeen gesproken niet?
+            LOGGER.error("error occurred: ", sae);
 
-            ErrorMessage errorMessage = new ErrorMessage(re.getMessage());
-            LOGGER.debug("errorMessge to display: " + errorMessage.getDescription());
-            model.put("errorMessage", errorMessage);
-
-            returnUrl = "error";
-        } catch (ObjectMapperException ome) {
-            LOGGER.error("failed to map: ", ome);
-
-            ErrorMessage errorMessage = new ErrorMessage(ome.getMessage());
-            LOGGER.debug("errorMessge to display: " + errorMessage.getDescription());
-            model.put("errorMessage", errorMessage);
+            ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
+            LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
 
             returnUrl = "error";
+//        } catch (RepositoryException re) {
+//            LOGGER.error("failed to search: ", re);
+//
+//            ErrorMessage errorMessage = new ErrorMessage(re.getMessage());
+//            LOGGER.debug("errorMessge to display: " + errorMessage.getDescription());
+//            model.put("errorMessage", errorMessage);
+//
+//            returnUrl = "error";
+//        } catch (ObjectMapperException ome) {
+//            LOGGER.error("failed to map: ", ome);
+//
+//            ErrorMessage errorMessage = new ErrorMessage(ome.getMessage());
+//            LOGGER.debug("errorMessge to display: " + errorMessage.getDescription());
+//            model.put("errorMessage", errorMessage);
+//
+//            returnUrl = "error";
 //        } catch (SearchAppException e) {
-//            e.printStackTrace();
+//            LOGGER.error("PLACEHOLDER: ", e);
+//            return "error";
         }
 
         return returnUrl;
@@ -108,18 +117,31 @@ public class ProductController {
     @GetMapping(path = PRODUCTS_ROOT_URL + "searchResult")
     public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         LOGGER.info("pagination: " + paginationObject);
+        String returnUrl;
 
-        List<Product> resultList = service.searchWithPagination(
-                                            searchForm.getInput(),
-                                            searchForm.getRating(),
-                                            searchForm.getMinQuantitySold(),
-                                            searchForm.getSortOption(),
-                                            paginationObject
-                                    );
-        model.put("resultList", resultList);
-        model.put("searchForm", searchForm);
-        model.put("numberOfResults", resultList.size());
-        return "search-result";
+        List<Product> resultList;
+        try {
+            resultList = service.searchWithPagination(
+                                                searchForm.getInput(),
+                                                searchForm.getRating(),
+                                                searchForm.getMinQuantitySold(),
+                                                searchForm.getSortOption(),
+                                                paginationObject
+                                        );
+            model.put("resultList", resultList);
+            model.put("searchForm", searchForm);
+            model.put("numberOfResults", resultList.size());
+
+            returnUrl = "search-result";
+        } catch (SearchAppException sae){
+            LOGGER.error("error occurred: ", sae);
+
+            ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
+            LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+
+            returnUrl = "error";
+        }
+        return returnUrl;
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "nextPage")
@@ -145,14 +167,6 @@ public class ProductController {
             model.put("ratingOptions", CustomerRatingOptions.values());
 
             returnUrl = "product-details";
-        } catch (RepositoryException re){
-            LOGGER.error("failed to search: ", re);
-
-            ErrorMessage errorMessage = new ErrorMessage(re.getMessage());
-            LOGGER.debug("errorMessge to display: " + errorMessage.getDescription());
-            model.put("errorMessage", errorMessage);
-
-            returnUrl = "error";
         } catch (ProductNotFoundException pnfe){
             LOGGER.error("failed to getOne by id: " + grpId, pnfe);
 
@@ -161,33 +175,75 @@ public class ProductController {
             model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
+        } catch (SearchAppException sae){
+            LOGGER.error("error occurred: ", sae);
+
+            ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
+            LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+
+            returnUrl = "error";
         }
 
         return returnUrl;
     }
 
-    @PostMapping(path = PRODUCTS_ROOT_URL + "details/{grpId}")                                                                   //TODO: idem als deleteById, return naar search-result
+    @PostMapping(path = PRODUCTS_ROOT_URL + "details/{grpId}")
     public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct, @PathVariable("grpId") String grpId){
-        service.updateByGrpId(grpId, updateProduct);
+        String returnUrl;
+
+        try {
+            service.updateByGrpId(grpId, updateProduct);
+            returnUrl = "redirect:" + mvc.url("PC#getResultList").build();
+        } catch (ObjectMapperException ome){
+            LOGGER.error("mapping error occurred: ", ome);
+
+            ErrorMessage errorMessage = new ErrorMessage(ome.getMessage());
+            LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+
+            returnUrl = "error";
+        } catch (SearchAppException sae){
+            LOGGER.error("error occurred: ", sae);
+
+            ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
+            LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+
+            returnUrl = "error";
+        }
+
+
         Thread thread = new Thread();
         try {                                                                                                           // TODO: asynchronisatie
             thread.sleep(1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return "redirect:" + mvc.url("PC#getResultList").build();
+        return returnUrl;
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "/delete")
-    public String delete(@RequestParam String grpId){                                           //TODO: searchForm meekrijgen na post zodat lijst opnieuw kan getoond worden na deleteById
-        service.deleteByGrpId(grpId);
+    public String delete(@RequestParam String grpId){
+        String returnUrl;
+
+        try {
+            service.deleteByGrpId(grpId);
+            return "redirect:" + mvc.url("PC#getResultList").build();
+        } catch (SearchAppException sae){
+            LOGGER.error("error occurred: ", sae);
+
+            ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
+            LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+
+            returnUrl = "error";
+        }
+
         Thread thread = new Thread();
         try {                                                                                                           // TODO: asynchronisatie
             thread.sleep(1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return "redirect:" + mvc.url("PC#getResultList").build();
+
+        return returnUrl;
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "/new")
@@ -199,7 +255,19 @@ public class ProductController {
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "/new")
     public String postAddForm(@ModelAttribute("newProductForm") Product newProduct){                                 //TODO: validation => Empty form indexed new product, slechte redirect
-        service.add(newProduct);
+        String returnUrl;
+
+        try {
+            service.add(newProduct);
+            returnUrl = "redirect:" + mvc.url("PC#details").build() + newProduct.getGrp_id();                        //TODO: "back to results" van details na newProduct crasht
+        } catch (SearchAppException sae){
+            LOGGER.error("error occurred: ", sae);
+
+            ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
+            LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+
+            returnUrl = "error";
+        }
 
         Thread thread = new Thread();
         try {                                                                                                           // TODO: asynchronisatie
@@ -207,9 +275,7 @@ public class ProductController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        String url = "redirect:" + mvc.url("PC#details").build() + newProduct.getUpc12();
-//        LOGGER.debug(url);
-        return "redirect:" + mvc.url("PC#details").build() + newProduct.getGrp_id();                        //TODO: "back to results" van details na newProduct crasht
+        return returnUrl;
     }
 
 //    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "probleem")
