@@ -65,7 +65,7 @@ public class ProductHelper {
     }
 
     public String productToJson(Product product) throws ObjectMapperException {
-        String jsonString = null;
+        String jsonString;
 
         try {
             jsonString = objectMapper.writeValueAsString(product);
@@ -80,7 +80,7 @@ public class ProductHelper {
 
     public String searchResponseToId(SearchResponse response) throws ProductNotFoundException {                                                          //TODO: potentiële NPE/betere oplossing?
         SearchHit[] searchHits = response.getHits().getHits();
-        String id = null;
+        String id;
         if (searchHits.length != 0){
             id = searchHits[0].getId();
         } else {

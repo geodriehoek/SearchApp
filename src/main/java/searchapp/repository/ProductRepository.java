@@ -43,7 +43,6 @@ public class ProductRepository {
         }catch(IOException ioe){
             throw new RepositoryException("unable to access database: search", ioe);
         }
-
 //        return response;
     }
 
