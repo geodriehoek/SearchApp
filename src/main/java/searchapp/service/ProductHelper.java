@@ -2,6 +2,7 @@ package searchapp.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.elasticsearch.action.ActionRequestValidationException;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.search.SearchHit;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import searchapp.domain.Product;
 import searchapp.domain.customExceptions.NoResultListException;
 import searchapp.domain.customExceptions.ObjectMapperException;
+import searchapp.domain.customExceptions.ProductNotFoundException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -97,9 +99,7 @@ public class ProductHelper {
                 e.printStackTrace();
             }
         }else{
-            LOGGER.error("------------");
-            LOGGER.error("NO SUCH PRODUCT");
-            LOGGER.error("------------");
+            throw new ProductNotFoundException("sdfsdfh");                                                              //TODO: hier sowieso al te laat?
         }
         return product;
     }

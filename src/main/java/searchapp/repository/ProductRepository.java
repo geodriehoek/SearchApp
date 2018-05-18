@@ -1,5 +1,6 @@
 package searchapp.repository;
 
+import org.elasticsearch.action.ActionRequestValidationException;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -17,8 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import searchapp.domain.customExceptions.ProductNotFoundException;
 import searchapp.domain.customExceptions.RepositoryException;
 import searchapp.domain.Product;
+import searchapp.domain.customExceptions.SearchAppException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,15 +51,19 @@ public class ProductRepository {
     }
 
     public SearchResponse searchThrows(SearchRequest searchRequest) throws RepositoryException {
+        SearchResponse response;
         try {
-            return client.search(searchRequest);
+//            response = client.search(searchRequest);
 //            throw new IOException("test: exception forced");
+            return client.search(searchRequest);
         }catch(IOException ioe){
             throw new RepositoryException("unable to access database", ioe);
         }
+
+//        return response;
     }
 
-    public GetResponse getById(String id){
+    public GetResponse getById(String id) throws SearchAppException{
         GetResponse getResponse = null;
         GetRequest getRequest = new GetRequest(
                 "products",
@@ -66,8 +73,10 @@ public class ProductRepository {
 
         try {
             getResponse = client.get(getRequest);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ioe) {
+            throw new RepositoryException("unable to access database", ioe);
+//        } catch (ActionRequestValidationException arve){                                                              //TODO: mag weg eens opgevangen in service
+//            throw new ProductNotFoundException("No Id(" + id + ") present", arve);
         }
 
         return getResponse;

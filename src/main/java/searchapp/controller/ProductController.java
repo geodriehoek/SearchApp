@@ -3,14 +3,15 @@ package searchapp.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.spring5.expression.Mvc;
+import searchapp.domain.customExceptions.ProductNotFoundException;
 import searchapp.domain.customExceptions.RepositoryException;
 import searchapp.domain.customExceptions.ObjectMapperException;
 import searchapp.domain.Product;
-import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.ErrorMessage;
 import searchapp.domain.web.SearchForm;
@@ -53,7 +54,7 @@ public class ProductController {
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "search")
     public String postSearchForm(@ModelAttribute("searchForm") @Valid SearchForm searchForm, BindingResult br, Map<String, Object> model){
-        String returnUrl = null;
+        String returnUrl;
         model.put("searchForm", searchForm);
         this.searchForm = searchForm;
         if(br.hasErrors()){
@@ -137,10 +138,32 @@ public class ProductController {
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "details/{grpId}")
     public String details(@PathVariable("grpId") String grpId, Map<String, Object> model){
-        model.put("updateProductForm", new Product(service.getOneByGrpId(grpId)));
-        model.put("ratingOptions", CustomerRatingOptions.values());
+        String returnUrl = null;                                                                                    //intellij doe raar
 
-        return "product-details";
+        try {
+            model.put("updateProductForm", new Product(service.getOneByGrpId(grpId)));
+            model.put("ratingOptions", CustomerRatingOptions.values());
+
+            returnUrl = "product-details";
+        } catch (RepositoryException re){
+            LOGGER.error("failed to search: ", re);
+
+            ErrorMessage errorMessage = new ErrorMessage(re.getMessage());
+            LOGGER.debug("errorMessge to display: " + errorMessage.getDescription());
+            model.put("errorMessage", errorMessage);
+
+            returnUrl = "error";
+        } catch (ProductNotFoundException pnfe){
+            LOGGER.error("failed to getOne by id: " + grpId, pnfe);
+
+            ErrorMessage errorMessage = new ErrorMessage("404", pnfe.getMessage());
+            LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());                                  //TODO: hoe @ResponseStatus-message tonen? via whitelabel page werkt het
+            model.put("errorMessage", errorMessage);
+
+            returnUrl = "error";
+        }
+
+        return returnUrl;
     }
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "details/{grpId}")                                                                   //TODO: idem als deleteById, return naar search-result
@@ -188,4 +211,12 @@ public class ProductController {
 //        LOGGER.debug(url);
         return "redirect:" + mvc.url("PC#details").build() + newProduct.getGrp_id();                        //TODO: "back to results" van details na newProduct crasht
     }
+
+//    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "probleem")
+//    @ExceptionHandler(RepositoryException.class)
+//    public void conflict(){}
+//    //lijkt te werken, doch eerst uitzoeken hoe info door te geven naar view
+//    //  bvb whitelabel vraagt timestamp
+//    //  mss goe om uniforme handeling te bekomen
+//    //  https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#controller-based-exception-handling
 }

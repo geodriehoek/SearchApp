@@ -1,5 +1,6 @@
 package searchapp.service;
 
+import org.elasticsearch.action.ActionRequestValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import searchapp.domain.customExceptions.NullSearchException;
 import searchapp.domain.customExceptions.ObjectMapperException;
 import searchapp.domain.Product;
+import searchapp.domain.customExceptions.ProductNotFoundException;
 import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.SearchForm;
@@ -91,12 +93,16 @@ public class ProductService {
         );
     }
 
-    public Product getOneById(String id){
-        return helper.getResponseToProduct(
-                repo.getById(
-                        id
-                )
-        );
+    public Product getOneById(String id) throws SearchAppException{
+        try {
+            return helper.getResponseToProduct(
+                    repo.getById(
+                            id
+                    )
+            );
+        }catch (ActionRequestValidationException arve){
+            throw new ProductNotFoundException("No given id present", arve);
+        }
     }
 
     public Product getOneByGrpId(String grpId){
