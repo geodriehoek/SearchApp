@@ -180,6 +180,7 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
+            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         }

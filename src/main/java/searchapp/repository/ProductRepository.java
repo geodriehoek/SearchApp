@@ -57,6 +57,7 @@ public class ProductRepository {
 
         try {
             getResponse = client.get(getRequest);
+//            throw new IOException("force test");
         } catch (IOException ioe) {
             throw new RepositoryException("unable to access database: getOne", ioe);
         }
