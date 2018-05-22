@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import searchapp.domain.Product;
+import searchapp.domain.customExceptions.ObjectMapperException;
+import searchapp.domain.customExceptions.ProductNotFoundException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,15 +18,14 @@ import java.util.List;
 
 @Service
 public class ProductHelper {
-    Logger log = LoggerFactory.getLogger(ProductHelper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProductHelper.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<Product> searchResponseToList(SearchResponse response) {
+    public List<Product> searchResponseToList(SearchResponse response) throws ObjectMapperException {
         SearchHit[] searchHits = response.getHits().getHits();
         List<Product> resultList = new ArrayList<>();
 
         for (SearchHit hit : searchHits) {
-//            ObjectMapper objectMapper = new ObjectMapper();
             try {
                 resultList.add(
                         new Product(
@@ -34,33 +35,40 @@ public class ProductHelper {
                                 hit.getScore()
                         )
                 );
+//                throw new IOException("test: force exception");                                                         //TODO: forced exception for testing
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new ObjectMapperException("failed mapping to Object", e);
             }
         }
         return resultList;
     }
 
-    public String searchResponseTo_Id(SearchResponse response){                                                         //TODO: NPE bij afwezige entry
-        SearchHit[] searchHits = response.getHits().getHits();
-        return searchHits[0].getId();
-    }
-
-    public String productToJson(Product product) {
-        String jsonString = null;
+    public String productToJson(Product product) throws ObjectMapperException {
+        String jsonString;
 
         try {
-            jsonString = objectMapper.writeValueAsString(product);
-//            jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(product);
+//            jsonString = objectMapper.writeValueAsString(product);
+            jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(product);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            throw new ObjectMapperException("failed mapping to Json", e);
         }
-        System.out.println(jsonString);
+        LOGGER.info("translated Product to json: " + jsonString);
 
         return jsonString;
     }
 
-    public Product getResponseToProduct(GetResponse response){
+    public String searchResponseToId(SearchResponse response) throws ProductNotFoundException {
+        SearchHit[] searchHits = response.getHits().getHits();
+        String id;
+        if (searchHits.length != 0){
+            id = searchHits[0].getId();
+        } else {
+            throw new ProductNotFoundException("No Product found with given id");
+        }
+        return id;
+    }
+
+    public Product getResponseToProduct(GetResponse response) throws ProductNotFoundException {
         Product product = null;
 
         if(response.isExists()){
@@ -70,25 +78,8 @@ public class ProductHelper {
                 e.printStackTrace();
             }
         }else{
-            log.error("------------");
-            log.error("NO SUCH PRODUCT");
-            log.error("------------");
+            throw new ProductNotFoundException("No Product found by given id");                                         //TODO: hier sowieso al te laat?
         }
         return product;
     }
-
-//    public PaginationObject interpretPagination(PaginationObject pagination){
-//        int from = pagination.getFrom();
-//        int size = pagination.getSize();
-//
-//        if(pagination.getDirection() == PaginationDirection.FORWARD){                                                   //TODO: error-bounds
-//            from = from + size;
-//        }else if(pagination.getDirection() == PaginationDirection.BACK){
-//            from = from - size;
-//        }else{
-//            log.error("wrong pagination direction");                                                                       //TODO: altijd hier
-//        }
-//
-//        return new PaginationObject(from, size, pagination.getDirection());
-//    }                                       //TODO: mag weg, overgezet naar klasse-methode
 }

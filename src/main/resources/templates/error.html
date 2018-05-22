@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>error-page</title>
+    <link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css"/>
+</head>
+<body>
+    <div class="container">
+        <div class="jumbotron">
+            <!--onderstaand is vorige; i.p.v. 2 div's-->
+            <!--<h1 th:text="${errorMessage.status != null} ? ${errorMessage.status} : '404'"></h1>-->
+            <!--<h2 th:text="${errorMessage.description != null} ? ${errorMessage.description} : 'Page Not Found'"></h2>-->
+            <div th:if="${errorMessage != null}">
+                <h1 th:text="${errorMessage.status} ?: '000'"></h1>
+                <h2 th:text="${errorMessage.description} ?: 'error unknown'"></h2>
+            </div>
+            <div th:if="${errorMessage == null}">
+                <h1>404</h1>
+                <h2>Page Not Found</h2>
+            </div>
+        </div>
+        <div>
+        </div>
+    </div>
+</body>
+</html>

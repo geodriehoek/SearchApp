@@ -1,4 +1,4 @@
-package searchapp.service;
+package searchapp.domain.web;
 
 import org.slf4j.LoggerFactory;
 
@@ -54,20 +54,24 @@ public class PaginationObject {
                 if(from - size >= 0){
                     from = from - size;
                 }else{
-                    LoggerFactory.getLogger(PaginationObject.class).error("search-from can't be negative");             //TODO: hier wel loggen?
+                    LoggerFactory.getLogger(PaginationObject.class).warn("search-from can't be negative");             //TODO: hier wel loggen?
                 }
                 break;
             default:                                                                                                  //TODO: nood aan default?
-                LoggerFactory.getLogger(PaginationObject.class).error("unable to interpret search-from");             //TODO: hier wel loggen?
+                LoggerFactory.getLogger(PaginationObject.class).warn("unable to interpret search-from");             //TODO: hier wel loggen?
         }
     }
 
+    public void reset(){
+        this.from = 0;
+    }
+
     @Override
-    public String toString() {                                                                                          //TODO: weg
+    public String toString() {
         return "PaginationObject{" +
                 "from=" + from +
                 ", size=" + size +
                 ", direction=" + direction +
                 '}';
-    }
+    }                                                                                      //TODO: weg
 }

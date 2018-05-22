@@ -15,6 +15,12 @@
         <form method="post" th:object="${searchForm}">
             <div class="form-group">
                 <label for="searchInput">Enter Search:</label>
+                <div class="alert alert-danger"
+                     th:if="${#fields.hasErrors('input')}"
+                     th:errors="*{input}">
+                     <!--th:each="e : ${#fields.errors('input')}"-->
+                     <!--th:text="${e}">-->
+                </div>
                 <input class="form-control" type="text" id="searchInput" th:field="*{input}"/>
                 <!-- name="searchFormInput"-->
                 <!--th:field="*{autoSuggest}"  hierboven toevoegen voor suggest?-->

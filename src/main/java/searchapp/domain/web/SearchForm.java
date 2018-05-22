@@ -1,7 +1,9 @@
 package searchapp.domain.web;
 
+import javax.validation.constraints.NotBlank;
+
 public class SearchForm {
-    private String id;                                                                                                  // momenteel nog ni gebruikt
+    @NotBlank
     private String input;
     private CustomerRatingOptions rating;
     private long minQuantitySold;
@@ -57,19 +59,10 @@ public class SearchForm {
         this.sortOption = sortOption;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
     @Override
-    public String toString() {                                                                                          //TODO: weg, enkel logging-nut
+    public String toString() {                                                                                          //TODO: enkel voor logging, dus mag weg
         return "SearchForm{" +
-                "id='" + id + '\'' +
-                ", input='" + input + '\'' +
+                "input='" + input + '\'' +
                 ", rating=" + rating +
                 ", minQuantitySold=" + minQuantitySold +
                 ", sortOption=" + sortOption +
