@@ -16,6 +16,7 @@ algemene topics/vragen:
     - validatie/security
         -> moet ik mij daarmee bezig houden?
 
+BEZIG:
 
 GEDAAN:
     - CRUD-afwerking
@@ -27,6 +28,17 @@ GEDAAN:
     - pagination
         -> search/from
         -> href -> getDIRECTIONPage() -> wijziging PaginationObject.direction -> redirect: resultList
+    - alle Exceptions in repo door throwen tot Controller, zodat deze juist kan reageren
+        -> repo wrapt specifiek -> service throwt overkoepelend -> controller kan nog steeds specifiek afhandelen
+            => wat met afhandelen van overkoepelende SearchAppException op controller niveau?
+        -> nadeel: alle methoden van repo tot service throwen -> noodzakelijk?
+        -> catching in RestController
+            -> hoe/welke info overbrengen?
+    - FIX voor update/delete/index-latency
+                -> async blijkt GEEN OPL
+                -> index.refresh lijkt nog niet geintegreerd in RESTclient
+                ===> "request.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);"
+                    -> niet goed voor bulk
     FIX/OPTIMALISATIE:
     ------------------
         - verwijderen Product.id -> alles via grp_id: business-id == _id
@@ -36,13 +48,23 @@ GEDAAN:
                     => ObjectMapper exceptions omtrent fields niet aanwezig
                         -> waarom? geen probleem wanneer ik in Klasse extra velden toevoegde die niet in db staan
                                    wel als er in db meer velden staan dan in Klasse
+                - welke HttpResponseCodes returnen? liever geen 500? of net wel
 
 
-TODO:   - index from file?
-        - exceptioncatching en logging optimaliseren -> aspects?
-            -> productRepository
-            -> productHelper
-        - view-layer-checks met thymeleaf -> nullSearch verhelpen
+TODO:   - placeholder-methods vervangen
+        - exceptioncatching en logging optimaliseren
+            -> algemene exceptions algemeen opvangen?
+                -> bvb: RepositoryException
+                    -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#simplemappingexceptionresolver
+                        of
+                    -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#using-controlleradvice-classes
+                        -> enkel statische pagina's => return "repository-error.html";
+            -> aspect voor logging? en Exception-info meesturen?
+                -> aspect dat exception onderschept en bundelt in Object(returnUrl, status, message)
+            -> REST
+                -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#errors-and-rest
+        - validation : new-product.html
+        - index from file?
         - suggesters (mapping van products-dataset ondersteunt dit nog niet)
             => mappings
         - ajax facets/suggestion
@@ -55,6 +77,11 @@ TODO:   - index from file?
                    -> alternatief search_after (gelijkaardig aan scroll, doch stateless)
 
 
+BUGS
+----------
+    - resultList -> details of one -> update this one -> return to resultList => placing of updated one changes
+        -> only first change??
+
 kleine vragen philippe
 ----------------------
     - RestAPI review
@@ -65,7 +92,13 @@ kleine vragen philippe
     - Thread.sleep() om NPE te vermijden
         -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt
             -> mogelijkheid: asynchrone melding van save, waarna redirect?
-
+    - client.close() forceren in ProductRepo
+        -> vangt sowieso IOException op
+        -> moet IllegalStateException (door .close()) dan ook opgevangen worden?
+            -> stel realistisch scenario => hoe mee omgaan?
+    - ExceptionConversionAspect werkt niet
+        -> methode zelf moet nog steeds throws declareren in signature, methode die oproept moet nog altijd catchen voor compiler
+            -> dus aspect onmogelijk? compeelt nutteloos?
 
 
 VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
@@ -88,3 +121,12 @@ VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
         -> tuples?
     - nut van stand-alone appilcations in huidige tijd?
         -> gezien ik de toepassing hiervan mogelijk heb overschat in mijn zelfstudie ivm web-applications
+
+
+
+
+
+FIXES:
+    - Elasticsearch exception [type=cluster_block_exception, reason=blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];]
+        PUT your_index_name/_settings
+          {"index": {"blocks": {"read_only_allow_delete": "false"}}}

@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class ProductHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductHelper.class);
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public List<Product> searchResponseToList(SearchResponse response) throws ObjectMapperException {
         SearchHit[] searchHits = response.getHits().getHits();

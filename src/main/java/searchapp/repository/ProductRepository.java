@@ -1,6 +1,8 @@
 package searchapp.repository;
 
+import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.DocWriteResponse;
+import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -9,6 +11,7 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.support.WriteRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.RestHighLevelClient;
@@ -66,7 +69,8 @@ public class ProductRepository {
                                 );
 
 //        request.upsert(jsonStringNewData, XContentType.JSON).docAsUpsert(true);
-        request.doc(jsonStringNewData, XContentType.JSON);
+        request.doc(jsonStringNewData, XContentType.JSON)
+                .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
         try {
             response = client.update(request);
             if (response.getResult() == DocWriteResponse.Result.UPDATED){
@@ -93,10 +97,11 @@ public class ProductRepository {
         DeleteResponse response;
 
         DeleteRequest request = new DeleteRequest(
-                "products",
-                "product",
-                id
-        );
+                                        "products",
+                                        "product",
+                                        id
+                                )
+                .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
 
         try {
 //            throw new IOException("test force exception");                                                              //TODO: force exception for testing
@@ -119,6 +124,34 @@ public class ProductRepository {
         }
     }
 
+//    public void deleteAsync(String id) throws RepositoryException {
+//        DeleteRequest request = new DeleteRequest(
+//                                        "products",
+//                                        "product",
+//                                        id
+//                                );
+//
+//        ActionListener<DeleteResponse> deleteListener = new ActionListener<DeleteResponse>() {
+//            @Override
+//            public void onResponse(DeleteResponse deleteResponse) {
+//                LOGGER.debug("deleting async by id: " + id);
+//                LOGGER.debug(deleteResponse.getResult().toString());
+//                LOGGER.debug(deleteResponse.status().toString());
+//            }
+//
+//            @Override
+//            public void onFailure(Exception e) {
+//                LOGGER.error("failed to delete by id: " + id);                                                          //TODO: werkt, zie comment | MAAR hoe throwen??
+//            }
+//        };
+////        try {
+////            client.close();
+////        } catch (IOException e) {
+////            throw new RepositoryException("unable to access database: delete");
+////        }
+//        client.deleteAsync(request, deleteListener);
+//    }
+
     public void index(String jsonProduct) throws RepositoryException {
         IndexResponse response;
 
@@ -126,7 +159,8 @@ public class ProductRepository {
                                             "products",
                                             "product"
                                     );
-        request.source(jsonProduct, XContentType.JSON);
+        request.source(jsonProduct, XContentType.JSON)
+                .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
 
         try {
             response = client.index(request);

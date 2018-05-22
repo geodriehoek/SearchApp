@@ -119,7 +119,7 @@ public class ProductController {
         List<Product> resultList;
 
         if (searchForm.getInput()==null){                                                                               //TODO: om crash na delete na rebuild (searchForm==null) te voorkomen
-            LOGGER.error("null search, cause: redireting after delete. redirecting to searchForm");
+            LOGGER.error("null search. redirecting to searchForm");
             return "redirect:" + mvc.url("PC#getSearchForm").build();
         }
 
@@ -218,11 +218,11 @@ public class ProductController {
         }
 
 
-        try {                                                                                                           // TODO: asynchronisatie
-            Thread.sleep(1000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {                                                                                                           // TODO: asynchronisatie
+//            Thread.sleep(1000L);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return returnUrl;
     }
 
@@ -243,11 +243,11 @@ public class ProductController {
             returnUrl = "error";
         }
 
-        try {                                                                                                           // TODO: asynchronisatie
-            Thread.sleep(1000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {                                                                                                           // TODO: asynchronisatie
+//            Thread.sleep(1000L);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 
         return returnUrl;
     }
@@ -260,12 +260,12 @@ public class ProductController {
     }
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "/new")
-    public String postAddForm(@ModelAttribute("newProductForm") Product newProduct, Map<String, Object> model){                                 //TODO: validation => Empty form indexed new product, slechte redirect
+    public String postAddForm(@ModelAttribute("newProductForm") Product newProduct, Map<String, Object> model){                                 //TODO: validation
         String returnUrl;
 
         try {
             service.add(newProduct);
-            returnUrl = "redirect:" + mvc.url("PC#details").build() + newProduct.getGrp_id();                        //TODO: "back to results" van details na newProduct crasht
+            returnUrl = "redirect:" + mvc.url("PC#details").build() + newProduct.getGrp_id();
         } catch (SearchAppException sae){
             LOGGER.error("error occurred: ", sae);
 
@@ -276,12 +276,11 @@ public class ProductController {
             returnUrl = "error";
         }
 
-        Thread thread = new Thread();
-        try {                                                                                                           // TODO: asynchronisatie
-            thread.sleep(1000L);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {                                                                                                           // TODO: asynchronisatie
+//            Thread.sleep(1000L);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return returnUrl;
     }
 
