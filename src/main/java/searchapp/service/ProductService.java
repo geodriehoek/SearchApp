@@ -6,11 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import searchapp.domain.Product;
-import searchapp.domain.customExceptions.ObjectMapperException;
 import searchapp.domain.customExceptions.ProductNotFoundException;
 import searchapp.domain.customExceptions.RepositoryException;
 import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.web.CustomerRatingOptions;
+import searchapp.domain.web.PaginationObject;
 import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
 import searchapp.repository.ProductRepository;
@@ -53,21 +53,6 @@ public class ProductService {
                 );
     }
 
-//    public List<Product> searchWithPagination(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption, PaginationObject paginationObject){
-//        return helper.searchResponseToList(
-//                    repo.search(
-//                            productQueryBuilder.buildMultiFieldQueryWithPagination(
-//                                    stringToSearch,
-//                                    ratingFilter,
-//                                    minQuantitySold,
-//                                    sortOption,
-//                                    paginationObject.getFrom(),
-//                                    paginationObject.getSize()
-//                            )
-//                    )
-//        );
-//    }
-
     public List<Product> searchWithPagination(String stringToSearch,
                                               CustomerRatingOptions ratingFilter,
                                               long minQuantitySold,
@@ -94,7 +79,7 @@ public class ProductService {
     }
 
     public Product getOneById(String id) throws SearchAppException{
-        LOGGER.debug("getting " + id);
+        LOGGER.debug("getting by id: " + id);
         try {
             return helper.getResponseToProduct(
                     repo.getById(

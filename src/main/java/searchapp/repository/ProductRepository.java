@@ -1,6 +1,5 @@
 package searchapp.repository;
 
-import org.elasticsearch.action.ActionRequestValidationException;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
@@ -18,14 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import searchapp.domain.customExceptions.ProductNotFoundException;
 import searchapp.domain.customExceptions.RepositoryException;
-import searchapp.domain.Product;
-import searchapp.domain.customExceptions.SearchAppException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository
 public class ProductRepository {
@@ -34,16 +28,12 @@ public class ProductRepository {
     private RestHighLevelClient client;
 
     public SearchResponse search(SearchRequest searchRequest) throws RepositoryException {
-        SearchResponse response;
-
         try {
-//            response = client.search(searchRequest);
-//            throw new IOException("test: exception forced");
             return client.search(searchRequest);
+//            throw new IOException("test forced exception");                                                             //TODO: forced exception for testing
         }catch(IOException ioe){
             throw new RepositoryException("unable to access database: search", ioe);
         }
-//        return response;
     }
 
     public GetResponse getById(String id) throws RepositoryException{
@@ -57,7 +47,7 @@ public class ProductRepository {
 
         try {
             getResponse = client.get(getRequest);
-//            throw new IOException("force test");
+//            throw new IOException("force test");                                                                      //TODO: forced exception for testing
         } catch (IOException ioe) {
             throw new RepositoryException("unable to access database: getOne", ioe);
         }
@@ -97,7 +87,7 @@ public class ProductRepository {
         }
 
 
-    }                            //TODO: returnvalue??
+    }
 
     public void delete(String id) throws RepositoryException {
         DeleteResponse response;
@@ -109,6 +99,7 @@ public class ProductRepository {
         );
 
         try {
+//            throw new IOException("test force exception");                                                              //TODO: force exception for testing
             response = client.delete(request);
             if (response.getResult() == DocWriteResponse.Result.DELETED){
                 LOGGER.info("------------------");
@@ -126,7 +117,7 @@ public class ProductRepository {
         } catch(IOException ioe){
             throw new RepositoryException("unable to access database: delete", ioe);
         }
-    }                                                      //TODO: returnvalue??
+    }
 
     public void index(String jsonProduct) throws RepositoryException {
         IndexResponse response;
@@ -152,10 +143,11 @@ public class ProductRepository {
                 LOGGER.warn(response.getId());
                 LOGGER.warn("-------------------");
             }
+//            throw new IOException("force exception test");                                                              //TODO: forced exception for testing
         } catch(IOException ioe){
             throw new RepositoryException("unable to access database: index", ioe);
         }
-    }                                              //TODO: returnvalue??
+    }
 
 //    @PreDestroy
 //    public void cleanUp(){

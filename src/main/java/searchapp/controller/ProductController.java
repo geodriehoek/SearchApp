@@ -7,17 +7,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.spring5.expression.Mvc;
-import searchapp.domain.customExceptions.ProductNotFoundException;
-import searchapp.domain.customExceptions.RepositoryException;
-import searchapp.domain.customExceptions.ObjectMapperException;
+import searchapp.domain.customExceptions.*;
 import searchapp.domain.Product;
-import searchapp.domain.customExceptions.SearchAppException;
 import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.ErrorMessage;
 import searchapp.domain.web.SearchForm;
 import searchapp.domain.web.SearchSortOption;
-import searchapp.service.PaginationDirection;
-import searchapp.service.PaginationObject;
+import searchapp.domain.web.PaginationDirection;
+import searchapp.domain.web.PaginationObject;
 import searchapp.service.ProductHelper;
 import searchapp.service.ProductService;
 
@@ -47,7 +44,7 @@ public class ProductController {
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "search")
     public String getSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
-//        model.put("searchForm", new SearchForm());                                                                    //dit i.t.t. hieronder garandeert een nieuwe search
+        paginationObject.reset();
         model.put("searchForm", searchForm);
         model.put("sortOptions", SearchSortOption.values());
         model.put("ratingOptions", CustomerRatingOptions.values());
@@ -57,17 +54,17 @@ public class ProductController {
     @PostMapping(path = PRODUCTS_ROOT_URL + "search")
     public String postSearchForm(@ModelAttribute("searchForm") @Valid SearchForm searchForm, BindingResult br, Map<String, Object> model){
         String returnUrl;
+        List<Product> resultList;
+        LOGGER.debug(searchForm.toString());
         model.put("searchForm", searchForm);
         this.searchForm = searchForm;
+
         if(br.hasErrors()){
             LOGGER.warn("search cannot be null, redirecting");
             model.put("sortOptions", SearchSortOption.values());
             model.put("ratingOptions", CustomerRatingOptions.values());
             return "search-product";
         }
-
-        LOGGER.debug(searchForm.toString());
-        List<Product> resultList = null;
 
         try {
             resultList = service.searchWithPagination(
@@ -83,7 +80,7 @@ public class ProductController {
             model.put("numberOfResults", resultList.size());
 
             returnUrl = "search-result";
-        } catch (SearchAppException sae){                                                                               //TODO: philippe: gezien context is dit beter, waarschijnlijk algemeen gesproken niet?
+        } catch (SearchAppException sae){                                                                               //TODO: philippe: gezien context is dit beter (dan comment), waarschijnlijk algemeen gesproken niet?
             LOGGER.error("error occurred: ", sae);
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
@@ -119,8 +116,13 @@ public class ProductController {
     public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         LOGGER.info("pagination: " + paginationObject);
         String returnUrl;
-
         List<Product> resultList;
+
+        if (searchForm.getInput()==null){                                                                               //TODO: om crash na delete na rebuild (searchForm==null) te voorkomen
+            LOGGER.error("null search, cause: redireting after delete. redirecting to searchForm");
+            return "redirect:" + mvc.url("PC#getSearchForm").build();
+        }
+
         try {
             resultList = service.searchWithPagination(
                                                 searchForm.getInput(),
@@ -146,14 +148,14 @@ public class ProductController {
         return returnUrl;
     }
 
-    @GetMapping(path = PRODUCTS_ROOT_URL + "nextPage")
+    @GetMapping(path = PRODUCTS_ROOT_URL + "nextPage")                                                                  //TODO: raar, doch werkend
     public String getNextPage(){
         paginationObject.setDirection(PaginationDirection.FORWARD);
-         paginationObject.interpretDirection();
+        paginationObject.interpretDirection();
         return "redirect:" + mvc.url("PC#getResultList").build();
     }
 
-    @GetMapping(path = PRODUCTS_ROOT_URL + "previousPage")
+    @GetMapping(path = PRODUCTS_ROOT_URL + "previousPage")                                                              //TODO: raar, doch werkend
     public String getPrevPage(){
         paginationObject.setDirection(PaginationDirection.BACK);
         paginationObject.interpretDirection();
@@ -191,7 +193,7 @@ public class ProductController {
     }
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "details/{grpId}")
-    public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct, @PathVariable("grpId") String grpId){
+    public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct, @PathVariable("grpId") String grpId, Map<String, Object> model){
         String returnUrl;
 
         try {
@@ -202,7 +204,7 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(ome.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
-//            model.put("errorMessage", errorMessage);
+            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         } catch (SearchAppException sae){
@@ -210,15 +212,14 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
-//            model.put("errorMessage", errorMessage);
+            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         }
 
 
-        Thread thread = new Thread();
         try {                                                                                                           // TODO: asynchronisatie
-            thread.sleep(1000L);
+            Thread.sleep(1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -226,25 +227,24 @@ public class ProductController {
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "/delete")
-    public String delete(@RequestParam String grpId){
+    public String delete(@RequestParam String grpId, Map<String, Object> model){
         String returnUrl;
 
         try {
             service.deleteByGrpId(grpId);
-            return "redirect:" + mvc.url("PC#getResultList").build();
+            returnUrl = "redirect:" + mvc.url("PC#getResultList").build();
         } catch (SearchAppException sae){
             LOGGER.error("error occurred: ", sae);
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
-//            model.put("errorMessage", errorMessage);
+            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         }
 
-        Thread thread = new Thread();
         try {                                                                                                           // TODO: asynchronisatie
-            thread.sleep(1000L);
+            Thread.sleep(1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -260,7 +260,7 @@ public class ProductController {
     }
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "/new")
-    public String postAddForm(@ModelAttribute("newProductForm") Product newProduct){                                 //TODO: validation => Empty form indexed new product, slechte redirect
+    public String postAddForm(@ModelAttribute("newProductForm") Product newProduct, Map<String, Object> model){                                 //TODO: validation => Empty form indexed new product, slechte redirect
         String returnUrl;
 
         try {
@@ -271,7 +271,7 @@ public class ProductController {
 
             ErrorMessage errorMessage = new ErrorMessage(sae.getMessage());
             LOGGER.debug("errorMessage to display: " + errorMessage.getDescription());
-//            model.put("errorMessage", errorMessage);
+            model.put("errorMessage", errorMessage);
 
             returnUrl = "error";
         }

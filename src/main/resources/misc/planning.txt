@@ -17,12 +17,6 @@ algemene topics/vragen:
         -> moet ik mij daarmee bezig houden?
 
 BEZIG:
-    - alle Exceptions in repo door throwen tot Controller, zodat deze juist kan reageren
-        -> repo wrapt specifiek -> service throwt overkoepelend -> controller kan nog steeds specifiek afhandelen
-            => wat met afhandelen van overkoepelende SearchAppException op controller niveau?
-        -> nadeel: alle methoden van repo tot service throwen -> noodzakelijk?
-    - catching in RestController
-        -> hoe/welke info overbrengen?
 
 GEDAAN:
     - CRUD-afwerking
@@ -44,6 +38,12 @@ GEDAAN:
                         -> waarom? geen probleem wanneer ik in Klasse extra velden toevoegde die niet in db staan
                                    wel als er in db meer velden staan dan in Klasse
                 - welke HttpResponseCodes returnen? liever geen 500? of net wel
+    - alle Exceptions in repo door throwen tot Controller, zodat deze juist kan reageren
+        -> repo wrapt specifiek -> service throwt overkoepelend -> controller kan nog steeds specifiek afhandelen
+            => wat met afhandelen van overkoepelende SearchAppException op controller niveau?
+        -> nadeel: alle methoden van repo tot service throwen -> noodzakelijk?
+        -> catching in RestController
+            -> hoe/welke info overbrengen?
 
 
 TODO:   - exceptioncatching en logging optimaliseren
@@ -58,6 +58,7 @@ TODO:   - exceptioncatching en logging optimaliseren
                 -> aspect dat exception onderschept en bundelt in Object(returnUrl, status, message)
             -> REST
                 -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#errors-and-rest
+        - ASYNC => oplossen thread.sleep (delete/index)
         - index from file?
         - suggesters (mapping van products-dataset ondersteunt dit nog niet)
             => mappings

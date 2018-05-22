@@ -21,27 +21,6 @@ public class ProductHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProductHelper.class);
     private ObjectMapper objectMapper = new ObjectMapper();
 
-//    public List<Product> searchResponseToList(SearchResponse response){
-//        SearchHit[] searchHits = response.getHits().getHits();
-//        List<Product> resultList = new ArrayList<>();
-//
-//        for (SearchHit hit : searchHits) {
-//            try {
-//                resultList.add(
-//                        new Product(
-//                                objectMapper.readValue(
-//                                        hit.getSourceAsString(),
-//                                        Product.class),
-//                                hit.getScore()
-//                        )
-//                );
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return resultList;
-//    }
-
     public List<Product> searchResponseToList(SearchResponse response) throws ObjectMapperException {
         SearchHit[] searchHits = response.getHits().getHits();
         List<Product> resultList = new ArrayList<>();
@@ -68,17 +47,17 @@ public class ProductHelper {
         String jsonString;
 
         try {
-            jsonString = objectMapper.writeValueAsString(product);
-//            jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(product);
+//            jsonString = objectMapper.writeValueAsString(product);
+            jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(product);
         } catch (JsonProcessingException e) {
             throw new ObjectMapperException("failed mapping to Json", e);
         }
-        System.out.println(jsonString);
+        LOGGER.info("translated Product to json: " + jsonString);
 
         return jsonString;
     }
 
-    public String searchResponseToId(SearchResponse response) throws ProductNotFoundException {                                                          //TODO: potentiële NPE/betere oplossing?
+    public String searchResponseToId(SearchResponse response) throws ProductNotFoundException {
         SearchHit[] searchHits = response.getHits().getHits();
         String id;
         if (searchHits.length != 0){

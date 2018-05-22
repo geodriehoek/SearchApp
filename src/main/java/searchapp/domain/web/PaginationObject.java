@@ -1,4 +1,4 @@
-package searchapp.service;
+package searchapp.domain.web;
 
 import org.slf4j.LoggerFactory;
 
@@ -62,12 +62,16 @@ public class PaginationObject {
         }
     }
 
+    public void reset(){
+        this.from = 0;
+    }
+
     @Override
-    public String toString() {                                                                                          //TODO: weg
+    public String toString() {
         return "PaginationObject{" +
                 "from=" + from +
                 ", size=" + size +
                 ", direction=" + direction +
                 '}';
-    }
+    }                                                                                      //TODO: weg
 }
