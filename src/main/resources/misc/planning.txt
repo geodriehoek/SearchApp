@@ -16,7 +16,8 @@ algemene topics/vragen:
     - validatie/security
         -> moet ik mij daarmee bezig houden?
 
-BEZIG:
+BEZIG:   - placeholder-methods vervangen
+            -> REST design afwerken
 
 GEDAAN:
     - CRUD-afwerking
@@ -62,8 +63,7 @@ GEDAAN:
             -> moet ik catchen??
 
 
-TODO:   - placeholder-methods vervangen
-        - exceptioncatching en logging optimaliseren
+TODO:   - exceptioncatching en logging optimaliseren
             -> algemene exceptions algemeen opvangen?
                 -> bvb: RepositoryException
                     -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#simplemappingexceptionresolver

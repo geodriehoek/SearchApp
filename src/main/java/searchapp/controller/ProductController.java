@@ -35,7 +35,7 @@ public class ProductController {
     private ProductHelper helper;
 
     private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
-    private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode => SearchForm.PaginationObject || momenteel blijft 'from' behouden na nieuwe search
+    private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode => SearchForm.PaginationObject || momenteel blijft 'from' behouden na nieuwe search => opgelost door PaginationObject.reset() -> goe genoeg?
 
     @ModelAttribute("searchForm")
     public SearchForm initializeSearchForm(){
@@ -67,16 +67,11 @@ public class ProductController {
         }
 
         try {
-            resultList = service.searchWithPagination(
-                    searchForm.getInput(),
-                    searchForm.getRating(),
-                    searchForm.getMinQuantitySold(),
-                    searchForm.getSortOption(),
-                    paginationObject
-            );
+            resultList = service.search(searchForm, paginationObject);
+
             model.put("resultList", resultList);
             model.put("paginationObject", paginationObject);
-            LOGGER.info("pagination: " + paginationObject);
+            LOGGER.debug("pagination: " + paginationObject);
             model.put("numberOfResults", resultList.size());
 
             returnUrl = "search-result";
@@ -114,7 +109,7 @@ public class ProductController {
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "searchResult")
     public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
-        LOGGER.info("pagination: " + paginationObject);
+        LOGGER.debug("pagination: " + paginationObject);
         String returnUrl;
         List<Product> resultList;
 
@@ -124,13 +119,7 @@ public class ProductController {
         }
 
         try {
-            resultList = service.searchWithPagination(
-                                                searchForm.getInput(),
-                                                searchForm.getRating(),
-                                                searchForm.getMinQuantitySold(),
-                                                searchForm.getSortOption(),
-                                                paginationObject
-                                        );
+            resultList = service.search(searchForm, paginationObject);
             model.put("resultList", resultList);
             model.put("searchForm", searchForm);
             model.put("numberOfResults", resultList.size());
@@ -190,7 +179,7 @@ public class ProductController {
         }
 
         return returnUrl;
-    }
+    }                                                               //TODO: manier vinden om id al mee door te geven? skippen van 2e search via producthelper
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "details/{grpId}")
     public String updateProduct(@ModelAttribute("updateProductForm") Product updateProduct, @PathVariable("grpId") String grpId, Map<String, Object> model){
@@ -237,12 +226,6 @@ public class ProductController {
             returnUrl = "error";
         }
 
-//        try {                                                                                                           // TODO: asynchronisatie
-//            Thread.sleep(1000L);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-
         return returnUrl;
     }
 
@@ -254,7 +237,7 @@ public class ProductController {
     }
 
     @PostMapping(path = PRODUCTS_ROOT_URL + "/new")
-    public String postAddForm(@ModelAttribute("newProductForm") Product newProduct, Map<String, Object> model){                                 //TODO: validation
+    public String postAddForm(@ModelAttribute("newProductForm") Product newProduct, Map<String, Object> model){                                 //TODO: validation of inputfields
         String returnUrl;
 
         try {

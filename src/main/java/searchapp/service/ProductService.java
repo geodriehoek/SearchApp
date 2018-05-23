@@ -27,37 +27,27 @@ public class ProductService {
     @Autowired
     private ProductHelper helper;
 
-    public List<Product> searchFromSearchForm(SearchForm searchForm) throws SearchAppException {                                                   //TODO: goe design-principe om specifieke input te routen naar algemenere methods
-        return search(
-                searchForm.getInput(),
-                searchForm.getRating(),
-                searchForm.getMinQuantitySold(),
-                searchForm.getSortOption()
-        );
-    }
-
-    public List<Product> search(String stringToSearch, CustomerRatingOptions ratingFilter, long minQuantitySold, SearchSortOption sortOption) throws SearchAppException {
-        LOGGER.info("searching: " + stringToSearch);
+    public List<Product> apiSearch(String stringToSearch,
+                                   CustomerRatingOptions ratingFilter,
+                                   long minQuantitySold,
+                                   SearchSortOption sortOption) throws SearchAppException {
+        LOGGER.debug("searching: " + stringToSearch);
         return helper.searchResponseToList(
                     repo.search(
-                            productQueryBuilder.buildMultiFieldQuery(stringToSearch, ratingFilter, minQuantitySold, sortOption)
+                            productQueryBuilder.buildMultiFieldQueryForAPI(stringToSearch, ratingFilter, minQuantitySold, sortOption)
                     )
                 );
-    }           //TODO: behouden voor RESTapi, of alles weg ifv ...WithPagination
+    }           //TODO: size-param
 
-    public List<Product> simpleSearch(String stringToSearch) throws SearchAppException {
-        return helper.searchResponseToList(
-                    repo.search(
-                            productQueryBuilder.buildMultiFieldQuery(stringToSearch, CustomerRatingOptions.ONE, 0, SearchSortOption.RELEVANCE)          //TODO: goe design om te hardcoden?
-                    )
-                );
+    public List<Product> apiSearch(String stringToSearch) throws SearchAppException {
+        return apiSearch(stringToSearch, CustomerRatingOptions.ONE, 0L, SearchSortOption.RELEVANCE);
     }
 
-    public List<Product> searchWithPagination(String stringToSearch,
-                                              CustomerRatingOptions ratingFilter,
-                                              long minQuantitySold,
-                                              SearchSortOption sortOption,
-                                              PaginationObject paginationObject) throws SearchAppException {
+    public List<Product> search(String stringToSearch,
+                                CustomerRatingOptions ratingFilter,
+                                long minQuantitySold,
+                                SearchSortOption sortOption,
+                                PaginationObject paginationObject) throws SearchAppException {
         return helper.searchResponseToList(
                     repo.search(
                             productQueryBuilder.buildMultiFieldQueryWithPagination(
@@ -69,6 +59,16 @@ public class ProductService {
                                     paginationObject.getSize()
                             )
                     )
+        );
+    }
+
+    public List<Product> search(SearchForm searchForm, PaginationObject paginationObject) throws SearchAppException {                                                   //TODO: goe design-principe om specifieke input te routen naar algemenere methods
+        return search(
+                searchForm.getInput(),
+                searchForm.getRating(),
+                searchForm.getMinQuantitySold(),
+                searchForm.getSortOption(),
+                paginationObject
         );
     }
 
@@ -86,7 +86,7 @@ public class ProductService {
                             id
                     )
             );
-        }catch (ActionRequestValidationException arve){
+        }catch (ActionRequestValidationException arve){                                                                 //TODO: wel goe??
             throw new ProductNotFoundException("No given id present", arve);
         }
     }

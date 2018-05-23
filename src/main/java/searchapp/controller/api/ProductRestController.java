@@ -28,11 +28,11 @@ public class ProductRestController {
     private Mvc mvc;
 //    private Logger log = LoggerFactory.getLogger(ProductRestController.class);
 
-    @GetMapping(path = "simpleSearch/{stringToSearch}",
+    @GetMapping(path = "search/{stringToSearch}",
                 produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Product> simpleSearchProducts(@PathVariable(name = "stringToSearch") String stringToSearch){
         try {
-            return service.simpleSearch(stringToSearch);
+            return service.apiSearch(stringToSearch);
         } catch (SearchAppException e) {
             LOGGER.error("PLACEHOLDER: ", e);
             return null;
@@ -47,7 +47,7 @@ public class ProductRestController {
                     @PathVariable(name = "minQuantitySold") long minQuantitySold,
                     @PathVariable(name = "sortOption") SearchSortOption sortOption){                                    //TODO: hoe enum aanpakken?
         try {
-            return service.search(
+            return service.apiSearch(
                             stringtoSearch,
                             rating,
                             minQuantitySold,

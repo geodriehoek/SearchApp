@@ -1,9 +1,7 @@
 package searchapp.domain;
 
-import java.util.Arrays;
-
 public class Product {
-//    private String id;                                                  //TODO: id fixen, momenteel group_id: business-id, doch dezelfde als _id
+
     private String brandName;
     private String productName;
     private Long customerRating;
@@ -11,7 +9,6 @@ public class Product {
     private String grp_id;
     private Long quantitySold;
     private String upc12;
-//    private String[] suggestions;
     private double score;                                               //TODO: na analyse weg// via update voegt het momenteel een "score"-field toe hierdoor
 
     public Product() {                                                  //TODO: constructors optimaliseren
@@ -101,5 +98,4 @@ public class Product {
     public void setScore(double score) {
         this.score = score;
     }
-
 }

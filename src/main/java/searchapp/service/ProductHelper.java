@@ -40,6 +40,7 @@ public class ProductHelper {
                 throw new ObjectMapperException("failed mapping to Object", e);
             }
         }
+        LOGGER.debug("results found: " + resultList.size());
         return resultList;
     }
 
@@ -52,7 +53,7 @@ public class ProductHelper {
         } catch (JsonProcessingException e) {
             throw new ObjectMapperException("failed mapping to Json", e);
         }
-        LOGGER.info("translated Product to json: " + jsonString);
+        LOGGER.debug("translated Product to json: " + jsonString);
 
         return jsonString;
     }
@@ -60,11 +61,14 @@ public class ProductHelper {
     public String searchResponseToId(SearchResponse response) throws ProductNotFoundException {
         SearchHit[] searchHits = response.getHits().getHits();
         String id;
+
         if (searchHits.length != 0){
             id = searchHits[0].getId();
         } else {
             throw new ProductNotFoundException("No Product found with given id");
         }
+        LOGGER.debug("id found: " + id);
+
         return id;
     }
 
@@ -77,8 +81,9 @@ public class ProductHelper {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            LOGGER.debug("product found by id: " + response.getId());
         }else{
-            throw new ProductNotFoundException("No Product found by given id");                                         //TODO: hier sowieso al te laat?
+            throw new ProductNotFoundException("No Product found by given id");
         }
         return product;
     }

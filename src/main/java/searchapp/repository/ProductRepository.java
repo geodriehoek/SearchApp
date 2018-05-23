@@ -1,8 +1,6 @@
 package searchapp.repository;
 
-import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.DocWriteResponse;
-import org.elasticsearch.action.admin.indices.refresh.RefreshRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
@@ -35,13 +33,12 @@ public class ProductRepository {
             return client.search(searchRequest);
 //            throw new IOException("test forced exception");                                                             //TODO: forced exception for testing
         }catch(IOException ioe){
-            throw new RepositoryException("unable to access database: search", ioe);
+            throw new RepositoryException("unable to access database: apiSearch", ioe);
         }
     }
 
     public GetResponse getById(String id) throws RepositoryException{
         GetResponse getResponse;
-
         GetRequest getRequest = new GetRequest(
                 "products",
                 "product",
