@@ -1,47 +1,9 @@
-algemene topics/vragen:
-    - heeft philippe voorkeur tussen:
-        - extra logica om scheiding tussen getOne en getList te maken   <->    alles returned List, getOne is List.get(0)
-    - algemene return-info overkoepelt alle repo-methoden?
-        Momenteel: repo returnt Response OF void
-            - service krijgt response, zet om naar usable data dmv helperKlasse
-                -> repo catcht client.exceptions | helper catcht Jackson.exceptions
-                    -> beter om service te laten catchen?? via aspect?
-    - veel kleine object-klassen gemaakt: pagination: 2; searchform: 3
-        -> goede oplossing?
-            -> geneste klassen beter?
-                - paginationDirection nested Class van paginationObject
-                - ratingOptions, sortOptions nested Class van searchForm
-                - PaginationDirection, nested Class van PaginationObject
-
-    - validatie/security
-        -> moet ik mij daarmee bezig houden?
-
 BEZIG:   - placeholder-methods vervangen
             -> REST design afwerken
 
-GEDAAN:
-    - CRUD-afwerking
-        - enkel PATCH (als single-field-updates) nog niet
-    - REST api/swagger
-    - refresh van resultList na details/delete.
-        -> instance var van Controller nl. searchForm
-        -> session attribute maken?? andere optie?
-    - pagination
-        -> search/from
-        -> href -> getDIRECTIONPage() -> wijziging PaginationObject.direction -> redirect: resultList
-    - alle Exceptions in repo door throwen tot Controller, zodat deze juist kan reageren
-        -> repo wrapt specifiek -> service throwt overkoepelend -> controller kan nog steeds specifiek afhandelen
-            => wat met afhandelen van overkoepelende SearchAppException op controller niveau?
-        -> nadeel: alle methoden van repo tot service throwen -> noodzakelijk?
-        -> catching in RestController
-            -> hoe/welke info overbrengen?
-    - FIX voor update/delete/index-latency
-                -> async blijkt GEEN OPL
-                -> index.refresh lijkt nog niet geintegreerd in RESTclient
-                ===> "request.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);"
-                    -> niet goed voor bulk
     FIX/OPTIMALISATIE:
     ------------------
+        - manier vinden om in service id te onthouden, zodat deze niet steeds moet searchen via grp_id
         - verwijderen Product.id -> alles via grp_id: business-id == _id
             -> VRAAG PHILLIPE:
                 - in reële gevallen, gebruikmaken van db-id? of business-id? => verschil tussen GET en SEARCH
@@ -63,7 +25,8 @@ GEDAAN:
             -> moet ik catchen??
 
 
-TODO:   - exceptioncatching en logging optimaliseren
+TODO:   -local thymeleaf enum import gedaan => enums in model weg
+        - exceptioncatching en logging optimaliseren
             -> algemene exceptions algemeen opvangen?
                 -> bvb: RepositoryException
                     -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#simplemappingexceptionresolver
@@ -92,47 +55,6 @@ BUGS
 ----------
     - resultList -> details of one -> update this one -> return to resultList => placing of updated one changes
         -> only first change??
-
-kleine vragen philippe
-----------------------
-    - RestAPI review
-        - ProductController.delete() is @GetMapping, moet dit DELETE zijn, of enkel voor rest-api?
-        - best practices rond enum-parameters van api-search: api/search/{string}/{customerRating}/...
-    - pagination review
-    - @ModelAttribute vragen aan philippe of goed als instance-var/ elders met queryparams
-    - Thread.sleep() om NPE te vermijden
-        -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt
-            -> mogelijkheid: asynchrone melding van save, waarna redirect?
-    - client.close() forceren in ProductRepo
-        -> vangt sowieso IOException op
-        -> moet IllegalStateException (door .close()) dan ook opgevangen worden?
-            -> stel realistisch scenario => hoe mee omgaan?
-    - ExceptionConversionAspect werkt niet
-        -> methode zelf moet nog steeds throws declareren in signature, methode die oproept moet nog altijd catchen voor compiler
-            -> dus aspect onmogelijk? compeelt nutteloos?
-
-
-VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
---------------------------------------
-    - exception handling
-        -> waar? welke info? welke info is het belangrijkst
-        -> o.a.: philippe liet eens vallen dat hij nooit aspects heeft gebruikt. waarom niet? mij leek aspects ideaal om structureel en consequent te catchen
-    - testing
-        -> beiden vnl theoretisch/conceptueel interessant aangezien praktischeid relatief simpel is??
-    - git??
-        -> gewoontes/voorkeuren binnen formica?
-    - validatie/security
-        -> moet ik mij daarmee bezig houden?
-        -> niveau? zelf schrijven <-> impl
-    - logging
-        -> waar, welke info?
-        -> dev vs. prod
-    - returnen van data bestaande uit meerdere dataTypes?
-        -> Klasse maken enige optie?
-        -> tuples?
-    - nut van stand-alone appilcations in huidige tijd?
-        -> gezien ik de toepassing hiervan mogelijk heb overschat in mijn zelfstudie ivm web-applications
-
 
 
 

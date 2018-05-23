@@ -1,0 +1,61 @@
+algemene topics/vragen:
+    - heeft philippe voorkeur tussen:
+        - extra logica om scheiding tussen getOne en getList te maken   <->    alles returned List, getOne is List.get(0)
+    - algemene return-info overkoepelt alle repo-methoden?
+        Momenteel: repo returnt Response OF void
+            - service krijgt response, zet om naar usable data dmv helperKlasse
+                -> repo catcht client.exceptions | helper catcht Jackson.exceptions
+                    -> beter om service te laten catchen?? via aspect?
+    - veel kleine object-klassen gemaakt: pagination: 2; searchform: 3
+        -> goede oplossing?
+            -> geneste klassen beter?
+                - paginationDirection nested Class van paginationObject
+                - ratingOptions, sortOptions nested Class van searchForm
+                - PaginationDirection, nested Class van PaginationObject
+    - 2 opties voor form-post op 1 pagina
+        -> 1 form, 1 link met PARAM: zie PC#details; save=post, delete=link
+            -> goeie oplossing?
+    - validatie/security
+        -> moet ik mij daarmee bezig houden?
+
+
+kleine vragen philippe
+----------------------
+    - RestAPI review
+        - ProductController.delete() is @GetMapping, moet dit DELETE zijn, of enkel voor rest-api?
+        - best practices rond enum-parameters van api-search: api/search/{string}/{customerRating}/...
+    - pagination review
+    - @ModelAttribute vragen aan philippe of goed als instance-var/ elders met queryparams
+    - Thread.sleep() om NPE te vermijden
+        -> Controller.update() -> update waarna refresh/ refresh te vroeg zodat ungeupdate entry getoond wordt
+            -> mogelijkheid: asynchrone melding van save, waarna redirect?
+    - client.close() forceren in ProductRepo
+        -> vangt sowieso IOException op
+        -> moet IllegalStateException (door .close()) dan ook opgevangen worden?
+            -> stel realistisch scenario => hoe mee omgaan?
+    - ExceptionConversionAspect werkt niet
+        -> methode zelf moet nog steeds throws declareren in signature, methode die oproept moet nog altijd catchen voor compiler
+            -> dus aspect onmogelijk? compeelt nutteloos?
+
+
+VRAGEN THEORIE/PRACTICES VOOR PHILIPPE
+--------------------------------------
+    - exception handling
+        -> waar? welke info? welke info is het belangrijkst
+        -> o.a.: philippe liet eens vallen dat hij nooit aspects heeft gebruikt. waarom niet? mij leek aspects ideaal om structureel en consequent te catchen
+    - testing
+        -> beiden vnl theoretisch/conceptueel interessant aangezien praktischeid relatief simpel is??
+    - git??
+        -> gewoontes/voorkeuren binnen formica?
+    - validatie/security
+        -> moet ik mij daarmee bezig houden?
+        -> niveau? zelf schrijven <-> impl
+    - logging
+        -> waar, welke info?
+        -> dev vs. prod
+    - returnen van data bestaande uit meerdere dataTypes?
+        -> Klasse maken enige optie?
+        -> tuples?
+    - nut van stand-alone appilcations in huidige tijd?
+        -> gezien ik de toepassing hiervan mogelijk heb overschat in mijn zelfstudie ivm web-applications
+

@@ -36,7 +36,12 @@
 
             <div class="form-group">
                 <label>minimum customer rating</label>
-                <input class="radio-inline" type="radio" th:field="*{rating}" th:each="val : ${ratingOptions}" th:value="${val}" th:text="${val.value}"/>
+                <!--<input class="radio-inline" type="radio" th:field="*{rating}" th:each="val : ${ratingOptions}" th:value="${val}" th:text="${val.value}"/>-->
+                <input type="radio"
+                       th:field="*{rating}"
+                        th:each="option: ${T(searchapp.domain.web.CustomerRatingOptions).values()}"
+                        th:value="${option}"
+                        th:text="${option.value}">
             </div>
             <div class="form-group">
                 <label>minimum quantity sold</label>
@@ -44,8 +49,12 @@
             </div>
             <div class="form-group">
                 <label>sort by</label>
-                <select th:field="*{sortOption}">
-                    <option th:each="option : ${sortOptions}" th:value="${option}" th:text="${option.description}"></option>
+                <select th:field="*{sortOption}" class="form-control">
+                    <!--<option th:each="option : ${sortOptions}" th:value="${option}" th:text="${option.description}"></option>-->
+                    <option th:each="option : ${T(searchapp.domain.web.SearchSortOption).values()}"
+                            th:value="${option}"
+                            th:text="${option.description}">
+                    </option>
                 </select>
             </div>
             <input type="submit" value="Search" class="btn btn-primary">

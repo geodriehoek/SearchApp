@@ -1,0 +1,21 @@
+GEDAAN:
+    - CRUD-afwerking
+        - enkel PATCH (als single-field-updates) nog niet
+    - REST api/swagger
+    - refresh van resultList na details/delete.
+        -> instance var van Controller nl. searchForm
+        -> session attribute maken?? andere optie?
+    - pagination
+        -> search/from
+        -> href -> getDIRECTIONPage() -> wijziging PaginationObject.direction -> redirect: resultList
+    - alle Exceptions in repo door throwen tot Controller, zodat deze juist kan reageren
+        -> repo wrapt specifiek -> service throwt overkoepelend -> controller kan nog steeds specifiek afhandelen
+            => wat met afhandelen van overkoepelende SearchAppException op controller niveau?
+        -> nadeel: alle methoden van repo tot service throwen -> noodzakelijk?
+        -> catching in RestController
+            -> hoe/welke info overbrengen?
+    - FIX voor update/delete/index-latency
+                -> async blijkt GEEN OPL
+                -> index.refresh lijkt nog niet geintegreerd in RESTclient
+                ===> "request.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);"
+                    -> niet goed voor bulk

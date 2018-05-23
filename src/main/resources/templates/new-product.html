@@ -31,8 +31,11 @@
         </div>
         <div class="form-group">
             <label for="cr">CustomerRating</label>
-            <select  id="cr" th:field="*{customerRating}">
-                <option th:each="option : ${ratingOptions}" th:value="${option.value}" th:text="${option.value}"/>
+            <select  id="cr" th:field="*{customerRating}" class="form-control">
+                <!--<option th:each="option : ${ratingOptions}" th:value="${option.value}" th:text="${option.value}"/>-->
+                <option th:each="option : ${T(searchapp.domain.web.CustomerRatingOptions).values()}"
+                        th:value="${option.value}"
+                        th:text="${option.value}"/>
             </select>
         </div>
         <div class="form-group">

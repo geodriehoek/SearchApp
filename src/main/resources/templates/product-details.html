@@ -32,8 +32,11 @@
                 </div>
                 <div class="form-group">
                     <label for="cr">CustomerRating</label>
-                    <select  id="cr" th:field="*{customerRating}">
-                        <option th:each="option : ${ratingOptions}" th:value="${option.value}" th:text="${option.value}"/>
+                    <select  id="cr" th:field="*{customerRating}" class="form-control">
+                        <!--<option th:each="option : ${ratingOptions}" th:value="${option.value}" th:text="${option.value}"/>-->
+                        <option th:each="option : ${T(searchapp.domain.web.CustomerRatingOptions).values()}"
+                                th:value="${option.value}"
+                                th:text="${option.value}"/>
                     </select>
                 </div>
                 <div class="form-group">
@@ -45,8 +48,7 @@
                     <input class="form-control" type="text" id="qs" th:field="*{quantitySold}"/>
                 </div>
             <input type="submit" value="SAVE" class="btn btn-primary">
-            <!--deleteById op details-pagina werkt niet aangezien ge in een form zit en enkel post is toegestaan?-->
-            <!--<a th:href="${#mvc.url('PC#deleteById').arg(0, updateProductForm.id).build()}" class="btn btn-sm btn-warning">DELETE</a>-->
+            <a th:href="${#mvc.url('PC#delete').arg(0, updateProductForm.grp_id).build()}" class="btn btn-sm btn-warning">DELETE</a>
         </form>
 
 
