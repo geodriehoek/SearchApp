@@ -15,7 +15,9 @@ GEDAAN:
         -> catching in RestController
             -> hoe/welke info overbrengen?
     - FIX voor update/delete/index-latency
-                -> async blijkt GEEN OPL
-                -> index.refresh lijkt nog niet geintegreerd in RESTclient
+        -> async blijkt GEEN OPL
+        -> index.refresh lijkt nog niet geintegreerd in RESTclient
                 ===> "request.setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);"
                     -> niet goed voor bulk
+    - OPTIM enums voor Product-eigenschappen locaal in thymeleaf geimporteerd
+        -> nietmeer in model te putten in controller

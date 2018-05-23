@@ -9,13 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.spring5.expression.Mvc;
 import searchapp.domain.customExceptions.*;
 import searchapp.domain.Product;
-import searchapp.domain.web.CustomerRatingOptions;
 import searchapp.domain.web.ErrorMessage;
 import searchapp.domain.web.SearchForm;
-import searchapp.domain.web.SearchSortOption;
 import searchapp.domain.web.PaginationDirection;
 import searchapp.domain.web.PaginationObject;
-import searchapp.service.ProductHelper;
 import searchapp.service.ProductService;
 
 import javax.validation.Valid;
@@ -31,8 +28,6 @@ public class ProductController {
     private ProductService service;
     @Autowired
     private Mvc mvc;
-    @Autowired
-    private ProductHelper helper;
 
     private SearchForm searchForm = new SearchForm();                                                                   //TODO: indien 2 vensters, laatste form overwrite eerste form // Rebuild na bvb details faalt (obviously)
     private PaginationObject paginationObject = new PaginationObject(0, 10);                                 //TODO: unhardcode => SearchForm.PaginationObject || momenteel blijft 'from' behouden na nieuwe search => opgelost door PaginationObject.reset() -> goe genoeg?
@@ -46,8 +41,6 @@ public class ProductController {
     public String getSearchForm(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
         paginationObject.reset();
         model.put("searchForm", searchForm);
-        model.put("sortOptions", SearchSortOption.values());
-        model.put("ratingOptions", CustomerRatingOptions.values());
         return "search-product";
     }
 
@@ -61,8 +54,6 @@ public class ProductController {
 
         if(br.hasErrors()){
             LOGGER.warn("search cannot be null, redirecting");
-            model.put("sortOptions", SearchSortOption.values());
-            model.put("ratingOptions", CustomerRatingOptions.values());
             return "search-product";
         }
 
@@ -157,7 +148,6 @@ public class ProductController {
 
         try {
             model.put("updateProductForm", new Product(service.getOneByGrpId(grpId)));
-            model.put("ratingOptions", CustomerRatingOptions.values());
 
             returnUrl = "product-details";
         } catch (ProductNotFoundException pnfe){
@@ -232,7 +222,6 @@ public class ProductController {
     @GetMapping(path = PRODUCTS_ROOT_URL + "/new")
     public String getAddForm(Map<String, Object> model){
         model.put("newProductForm", new Product());
-        model.put("ratingOptions", CustomerRatingOptions.values());
         return "new-product";
     }
 
@@ -255,6 +244,7 @@ public class ProductController {
 
         return returnUrl;
     }
+}
 
 //    @ResponseStatus(value = HttpStatus.CONFLICT, reason = "probleem")
 //    @ExceptionHandler(RepositoryException.class)
@@ -263,4 +253,3 @@ public class ProductController {
 //    //  bvb whitelabel vraagt timestamp
 //    //  mss goe om uniforme handeling te bekomen
 //    //  https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#controller-based-exception-handling
-}

@@ -25,8 +25,7 @@ BEZIG:   - placeholder-methods vervangen
             -> moet ik catchen??
 
 
-TODO:   -local thymeleaf enum import gedaan => enums in model weg
-        - exceptioncatching en logging optimaliseren
+TODO:   - exceptioncatching en logging optimaliseren
             -> algemene exceptions algemeen opvangen?
                 -> bvb: RepositoryException
                     -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#simplemappingexceptionresolver
