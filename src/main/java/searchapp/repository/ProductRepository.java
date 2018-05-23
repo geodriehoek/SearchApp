@@ -89,8 +89,6 @@ public class ProductRepository {
         } catch(IOException ioe){
             throw new RepositoryException("unable to access database: update", ioe);
         }
-
-
     }
 
     public void delete(String id) throws RepositoryException {
@@ -104,7 +102,6 @@ public class ProductRepository {
                 .setRefreshPolicy(WriteRequest.RefreshPolicy.IMMEDIATE);
 
         try {
-//            throw new IOException("test force exception");                                                              //TODO: force exception for testing
             response = client.delete(request);
             if (response.getResult() == DocWriteResponse.Result.DELETED){
                 LOGGER.info("------------------");
@@ -119,38 +116,11 @@ public class ProductRepository {
                 LOGGER.warn(response.getId());
                 LOGGER.warn("------------------");
             }
+//            throw new IOException("test force exception");                                                              //TODO: force exception for testing
         } catch(IOException ioe){
             throw new RepositoryException("unable to access database: delete", ioe);
         }
     }
-
-//    public void deleteAsync(String id) throws RepositoryException {
-//        DeleteRequest request = new DeleteRequest(
-//                                        "products",
-//                                        "product",
-//                                        id
-//                                );
-//
-//        ActionListener<DeleteResponse> deleteListener = new ActionListener<DeleteResponse>() {
-//            @Override
-//            public void onResponse(DeleteResponse deleteResponse) {
-//                LOGGER.debug("deleting async by id: " + id);
-//                LOGGER.debug(deleteResponse.getResult().toString());
-//                LOGGER.debug(deleteResponse.status().toString());
-//            }
-//
-//            @Override
-//            public void onFailure(Exception e) {
-//                LOGGER.error("failed to delete by id: " + id);                                                          //TODO: werkt, zie comment | MAAR hoe throwen??
-//            }
-//        };
-////        try {
-////            client.close();
-////        } catch (IOException e) {
-////            throw new RepositoryException("unable to access database: delete");
-////        }
-//        client.deleteAsync(request, deleteListener);
-//    }
 
     public void index(String jsonProduct) throws RepositoryException {
         IndexResponse response;
@@ -182,6 +152,34 @@ public class ProductRepository {
             throw new RepositoryException("unable to access database: index", ioe);
         }
     }
+
+//    public void deleteAsync(String id) throws RepositoryException {
+//        DeleteRequest request = new DeleteRequest(
+//                                        "products",
+//                                        "product",
+//                                        id
+//                                );
+//
+//        ActionListener<DeleteResponse> deleteListener = new ActionListener<DeleteResponse>() {
+//            @Override
+//            public void onResponse(DeleteResponse deleteResponse) {
+//                LOGGER.debug("deleting async by id: " + id);
+//                LOGGER.debug(deleteResponse.getResult().toString());
+//                LOGGER.debug(deleteResponse.status().toString());
+//            }
+//
+//            @Override
+//            public void onFailure(Exception e) {
+//                LOGGER.error("failed to delete by id: " + id);                                                          //TODO: werkt, zie comment | MAAR hoe throwen??
+//            }
+//        };
+////        try {
+////            client.close();
+////        } catch (IOException e) {
+////            throw new RepositoryException("unable to access database: delete");
+////        }
+//        client.deleteAsync(request, deleteListener);
+//    }
 
 //    @PreDestroy
 //    public void cleanUp(){

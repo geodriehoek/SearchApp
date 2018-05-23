@@ -49,6 +49,17 @@ GEDAAN:
                         -> waarom? geen probleem wanneer ik in Klasse extra velden toevoegde die niet in db staan
                                    wel als er in db meer velden staan dan in Klasse
                 - welke HttpResponseCodes returnen? liever geen 500? of net wel
+        - "If there is a version conflict, an ElasticsearchException will be thrown:
+                         ----------------
+           try {
+               DeleteRequest request = new DeleteRequest("posts", "doc", "1").version(2);
+               DeleteResponse deleteResponse = client.delete(request);
+           } catch (ElasticsearchException exception) {
+               if (exception.status() == RestStatus.CONFLICT) {
+
+               }
+           }"
+            -> moet ik catchen??
 
 
 TODO:   - placeholder-methods vervangen

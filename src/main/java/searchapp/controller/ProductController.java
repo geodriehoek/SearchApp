@@ -217,12 +217,6 @@ public class ProductController {
             returnUrl = "error";
         }
 
-
-//        try {                                                                                                           // TODO: asynchronisatie
-//            Thread.sleep(1000L);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         return returnUrl;
     }
 
@@ -276,11 +270,6 @@ public class ProductController {
             returnUrl = "error";
         }
 
-//        try {                                                                                                           // TODO: asynchronisatie
-//            Thread.sleep(1000L);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         return returnUrl;
     }
 
