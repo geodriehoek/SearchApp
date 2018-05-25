@@ -54,6 +54,8 @@
             <!--TODO: add th:if voor previous page-->
             <a th:href="${#mvc.url('PC#getPrevPage').build()}" class="btn btn-sm btn-light"> --Previous Page-- </a>
             <a th:href="${#mvc.url('PC#getNextPage').build()}" class="btn btn-sm btn-light"> --Next Page-- </a>
+            <!--<a th:href="${#mvc.url('PC#getResultList').arg(0, '${T(searchapp.domain.web.PaginationDirection).BACK}').build()}" class="btn btn-sm btn-light"> &#45;&#45;Previous Page&#45;&#45; </a>-->
+            <!--<a th:href="${#mvc.url('PC#getResultList').arg(0, '${T(searchapp.domain.web.PaginationDirection).FORWARD}').build()}" class="btn btn-sm btn-light"> &#45;&#45;Next Page&#45;&#45; </a>-->
         </div>
     </div>
 </div>

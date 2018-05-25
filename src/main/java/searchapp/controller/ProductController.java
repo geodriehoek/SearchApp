@@ -99,8 +99,10 @@ public class ProductController {
     }
 
     @GetMapping(path = PRODUCTS_ROOT_URL + "searchResult")
-    public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model){
+    public String getResultList(@ModelAttribute("searchForm") SearchForm searchForm, Map<String, Object> model/*, @RequestParam(value="dir", required = false) PaginationDirection dir*/){
         LOGGER.debug("pagination: " + paginationObject);
+        LOGGER.debug(searchForm.toString());
+//        LOGGER.debug(dir.toString());
         String returnUrl;
         List<Product> resultList;
 

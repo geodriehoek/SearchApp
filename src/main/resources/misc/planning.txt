@@ -1,5 +1,5 @@
-BEZIG:   - placeholder-methods vervangen
-            -> REST design afwerken
+BEZIG:   - betere pagination (zonder 2x redirect)
+            -> PaginationDirection als arg werkt momenteel nog niet
 
     FIX/OPTIMALISATIE:
     ------------------
@@ -25,7 +25,8 @@ BEZIG:   - placeholder-methods vervangen
             -> moet ik catchen??
 
 
-TODO:   - exceptioncatching en logging optimaliseren
+TODO:   - REST afwerken exceptions enal
+        - exceptioncatching en logging optimaliseren
             -> algemene exceptions algemeen opvangen?
                 -> bvb: RepositoryException
                     -> https://spring.io/blog/2013/11/01/exception-handling-in-spring-mvc#simplemappingexceptionresolver

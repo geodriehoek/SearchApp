@@ -15,6 +15,8 @@ algemene topics/vragen:
     - 2 opties voor form-post op 1 pagina
         -> 1 form, 1 link met PARAM: zie PC#details; save=post, delete=link
             -> goeie oplossing?
+    - thread-safe/ACID/CAP
+        -> moet ik mij daar al mee bezighouden?
     - validatie/security
         -> moet ik mij daarmee bezig houden?
 
