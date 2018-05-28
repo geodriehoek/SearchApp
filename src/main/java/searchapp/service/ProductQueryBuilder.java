@@ -1,13 +1,19 @@
 package searchapp.service;
 
 import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.common.xcontent.ToXContent;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import searchapp.domain.web.CustomerRatingOptions;
+import searchapp.domain.web.PaginationObject;
 import searchapp.domain.web.SearchSortOption;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,6 +78,15 @@ public class ProductQueryBuilder {
                 .size(size)
                 .sort(sortOption.getValue(), SortOrder.DESC)
         ;
+
+        //debugging purpose
+        try {
+            XContentBuilder b = XContentFactory.jsonBuilder().prettyPrint();
+            searchSourceBuilder.toXContent(b, ToXContent.EMPTY_PARAMS);
+            LoggerFactory.getLogger(ProductQueryBuilder.class).debug("SearchQuery: \n" + b.string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return request.source(searchSourceBuilder);
     }

@@ -1,5 +1,4 @@
-BEZIG:   - betere pagination (zonder 2x redirect)
-            -> PaginationDirection als arg werkt momenteel nog niet
+BEZIG:
 
     FIX/OPTIMALISATIE:
     ------------------
@@ -25,7 +24,11 @@ BEZIG:   - betere pagination (zonder 2x redirect)
             -> moet ik catchen??
 
 
-TODO:   - REST afwerken exceptions enal
+TODO:   - disMaxQuery() ipv boolQuery() zodat de aparte scores niet opgeteld worden: enkel beste match score
+        - betere pagination (zonder 2x redirect)
+            -> PaginationDirection als arg werkt momenteel nog niet- REST afwerken exceptions enal
+        - pre-filter i.p.v. aggs
+            -> search cost drukken
         - exceptioncatching en logging optimaliseren
             -> algemene exceptions algemeen opvangen?
                 -> bvb: RepositoryException
@@ -53,6 +56,8 @@ TODO:   - REST afwerken exceptions enal
 
 BUGS
 ----------
+    - searching for stopwords "and, or, the" => nullSearchException => tokenizer werkt wel
+        -> 2e test ni gerepliceerd
     - resultList -> details of one -> update this one -> return to resultList => placing of updated one changes
         -> only first change??
 

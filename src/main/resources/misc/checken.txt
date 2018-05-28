@@ -1,6 +1,8 @@
     - https://www.elastic.co/blog/composite-aggregations-elasticsearch-pizza-delivery-metrics?ultron=may-2018&blade=newsletter&hulk=email&mkt_tok=eyJpIjoiTXpVelkyWXlZMkUxTW1aayIsInQiOiJmVTdxSWJSXC9qN1JKRDMyZ2luNWUxeVdKXC9TWkRjZFBLN3ZwS3NWbHJTXC9EanJmNGlUYUhQQVhUWjhSaVZhcytvZjNRdUcwSzVFQWNqMlpxa0dUT2ZPWHdUanl3ejRaOCswU3dVcjYrblp0OXdLVjdVcVM0cytkTVdROEIxVEZXeCJ9
         -> ipv search from/size
 
+    - filtering ipv aggs
+        -> https://www.elastic.co/blog/found-optimizing-elasticsearch-searches
 
     - track_total_hits
         Set to false in order to disable the tracking of the total number of hits that match the query. (see Index Sorting for more details). Defaults to true.
